@@ -291,6 +291,21 @@ def manual_brew_coffee(coffee_type: int, group: str = "group1") -> Dict[str, Any
         
         print(f"Manual brewing coffee: group={group}, type={coffee_type}, erogTime={erog_time}, flowTotal={flow_total}")
         
+        
+        brewingtime = erog_time
+        while (brewingtime >= 0):
+            brewingtime = brewingtime - 20
+            flowRate = random.randint(10, 60)
+            print(f"flowRate: {flowRate}")
+            time.sleep(flowRate/100)
+        
+            coffee_device.send(
+                "it.d8pro.device.TelemetryFast01",
+                f"/{group}/flowRate",
+                flowRate,
+                timestamp=current_time
+            )
+        
         # Send coffee telemetry data
         coffee_device.send(
             "it.d8pro.device.TelemetryFast01",

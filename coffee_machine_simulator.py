@@ -112,6 +112,19 @@ class CoffeeMachineSimulator:
             
             print(f"Brewing coffee on {group}: type={coffee_type}, erogTime={erog_time}, flowTotal={flow_total}")
             
+            brewingtime = erog_time
+            while (brewingtime >= 0):
+                brewingtime = brewingtime - 20
+                flowRate = random.randint(10, 60)
+                print(f"flowRate: {flowRate}")
+            
+                self.device.send(
+                    self.interface_name,
+                    f"/{group}/flowRate",
+                    flowRate,
+                    timestamp=current_time
+                )
+            
             # Send coffee type
             self.device.send(
                 self.interface_name,
