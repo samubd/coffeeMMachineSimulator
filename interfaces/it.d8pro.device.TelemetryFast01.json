@@ -1,0 +1,182 @@
+{
+    "interface_name": "it.d8pro.device.TelemetryFast01",
+    "mappings": [
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 1314000,
+            "endpoint": "/group3/flowRate",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 1314000,
+            "endpoint": "/group2/flowError",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 1314000,
+            "endpoint": "/group2/flowRate",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 70956000,
+            "endpoint": "/group2/erogTime",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 1314000,
+            "endpoint": "/group2/flowTotal",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 1314000,
+            "endpoint": "/group2/currentTemp",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 70956000,
+            "endpoint": "/group1/erogTime",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 1314000,
+            "endpoint": "/extra/boilerLevelStatus",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 1314000,
+            "endpoint": "/group3/flowError",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 1314000,
+            "endpoint": "/group1/currentTemp",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 70956000,
+            "description": "{\"0\": \"No erogation\",\"1\": \"Espresso\",\"2\": \"Caffè\",\"3\": \"Doppio espresso\",\"4\": \"Doppio caffè\",\"5\": \"Continuo\",\"6\": \"Extra lungo\",\"7\": \"Extra lungo\",\"8\": \"Purge\",\"9\": \"Lavaggio manuale\",\"10\": \"Lavaggio automatico\"}",
+            "endpoint": "/group3/coffeeType",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 1314000,
+            "description": "{\"0\": \"No erogation\",\"1\": \"Tea1\",\"2\": \"Tea2\"}",
+            "endpoint": "/extra/teaType",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 1314000,
+            "endpoint": "/extra/boilerSecurityStatus",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 1314000,
+            "endpoint": "/steamBoilerTemp",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 1314000,
+            "endpoint": "/group3/currentTemp",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 1314000,
+            "endpoint": "/group3/flowTotal",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 1314000,
+            "endpoint": "/group1/flowError",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 70956000,
+            "endpoint": "/group3/erogTime",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 1314000,
+            "endpoint": "/group1/flowRate",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 1314000,
+            "endpoint": "/extra/teaErogTime",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 1314000,
+            "description": "{\"0\": \"Init\",\"1\": \"On\",\"2\": \"Off\", \"3\": \"Eco1\", \"4\": \"Eco2\", \"5\": \"Eco3\", \"6\": \"Eco4\", \"7\": \"Allarme\"}",
+            "endpoint": "/machineStatus",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 70956000,
+            "description": "{\"0\": \"No erogation\",\"1\": \"Espresso\",\"2\": \"Caffè\",\"3\": \"Doppio espresso\",\"4\": \"Doppio caffè\",\"5\": \"Continuo\",\"6\": \"Extra lungo\",\"7\": \"Extra lungo\",\"8\": \"Purge\",\"9\": \"Lavaggio manuale\",\"10\": \"Lavaggio automatico\"}",
+            "endpoint": "/group1/coffeeType",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 1314000,
+            "endpoint": "/group1/flowTotal",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 70956000,
+            "description": "{\"0\": \"No erogation\",\"1\": \"Espresso\",\"2\": \"Caffè\",\"3\": \"Doppio espresso\",\"4\": \"Doppio caffè\",\"5\": \"Continuo\",\"6\": \"Extra lungo\",\"7\": \"Extra lungo\",\"8\": \"Purge\",\"9\": \"Lavaggio manuale\",\"10\": \"Lavaggio automatico\"}",
+            "endpoint": "/group2/coffeeType",
+            "explicit_timestamp": true,
+            "type": "integer"
+        }
+    ],
+    "ownership": "device",
+    "type": "datastream",
+    "version_major": 0,
+    "version_minor": 1
+}

@@ -1,0 +1,164 @@
+{
+    "description": "cupNtcOpen, cupNtcShort from warning to major",
+    "interface_name": "it.d8pro.device.AlarmStd02",
+    "mappings": [
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "endpoint": "/major/group3NtcOpen",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "endpoint": "/major/group1NtcShort",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "endpoint": "/warning/group2FlowError",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "endpoint": "/critical/generalLoadingTimeout",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "endpoint": "/warning/group1FlowError",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "endpoint": "/major/group3HmiCommError",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "endpoint": "/major/group1NtcOpen",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "endpoint": "/critical/boilerNtcOpen",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "endpoint": "/major/cupNtcOpen",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "endpoint": "/major/group3NtcShort",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "endpoint": "/major/group2HmiCommError",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "endpoint": "/major/group3HeatingTimeout",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "endpoint": "/major/group2NtcShort",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "endpoint": "/warning/group3FlowError",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "endpoint": "/major/group1HmiCommError",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "endpoint": "/major/group2NtcOpen",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "endpoint": "/critical/boilerNtcShort",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "endpoint": "/major/group2HeatingTimeout",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "endpoint": "/major/group1HeatingTimeout",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "endpoint": "/major/cupNtcShort",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "endpoint": "/major/cupHeatingTimeout",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "endpoint": "/critical/boilerHeatingTimeout",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        }
+    ],
+    "ownership": "device",
+    "type": "datastream",
+    "version_major": 0,
+    "version_minor": 1
+}

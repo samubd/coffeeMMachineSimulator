@@ -1,0 +1,180 @@
+{
+    "interface_name": "it.d8pro.device.TelemetrySlow01",
+    "mappings": [
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "description": "{\"0\": \"Init\",\"1\": \"On\",\"2\": \"Off\", \"3\": \"Eco1\", \"4\": \"Eco2\", \"5\": \"Eco3/Eco4\", \"6\": \"Allarme\"}",
+            "endpoint": "/gr2Status",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "endpoint": "/gr2TempSetpoint",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "endpoint": "/heater/heaterGr2ActivationTime",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "endpoint": "/ev/evHotWaterEvents",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "endpoint": "/pump/pumpActivationEvents",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "endpoint": "/ev/ev1ActivationEvents",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "endpoint": "/heater/heaterGr3ActivationTime",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "endpoint": "/gr1TempSetpoint",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "endpoint": "/boiler/boiler1ActivationTime",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "endpoint": "/heater/heaterGr1ActivationTime",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "endpoint": "/pump/pumpActivationTime",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "endpoint": "/ucTemp",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "endpoint": "/boiler/boiler2ActivationTime",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "endpoint": "/boiler/boiler3ActivationTime",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "endpoint": "/manteinance/residualPumpActivation",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "endpoint": "/heaterSteamSetpoint",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "endpoint": "/ev/ev3ActivationEvents",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "endpoint": "/heater/heaterCupActivationTime",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "endpoint": "/ev/evWaterFillEvents",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "endpoint": "/ev/ev2ActivationEvents",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "description": "{\"0\": \"Init\",\"1\": \"On\",\"2\": \"Off\", \"3\": \"Eco1\", \"4\": \"Eco2\", \"5\": \"Eco3/Eco4\", \"6\": \"Allarme\"}",
+            "endpoint": "/gr3Status",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "endpoint": "/manteinance/residualFilterLiters",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "description": "{\"0\": \"Init\",\"1\": \"On\",\"2\": \"Off\", \"3\": \"Eco1\", \"4\": \"Eco2\", \"5\": \"Eco3/Eco4\", \"6\": \"Allarme\"}",
+            "endpoint": "/gr1Status",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 63072000,
+            "endpoint": "/gr3TempSetpoint",
+            "explicit_timestamp": true,
+            "type": "integer"
+        }
+    ],
+    "ownership": "device",
+    "type": "datastream",
+    "version_major": 0,
+    "version_minor": 1
+}

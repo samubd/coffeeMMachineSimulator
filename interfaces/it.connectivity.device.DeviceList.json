@@ -1,0 +1,33 @@
+{
+  "interface_name": "it.connectivity.device.DeviceList",
+  "mappings": [
+    {
+      "endpoint": "/%{number}/deviceUpdateStatus",
+      "type": "string"
+    },
+    {
+      "endpoint": "/%{number}/deviceNewFirmwareVersion",
+      "type": "string"
+    },
+    {
+      "endpoint": "/%{number}/deviceSerialNumber",
+      "type": "string"
+    },
+    {
+      "endpoint": "/%{number}/deviceFirmwareVersion",
+      "type": "string"
+    },
+    {
+      "endpoint": "/global/updateAvailable",
+      "type": "boolean"
+    },
+    {
+      "endpoint": "/%{number}/deviceCode",
+      "type": "string"
+    }
+  ],
+  "ownership": "device",
+  "type": "properties",
+  "version_major": 0,
+  "version_minor": 2
+}

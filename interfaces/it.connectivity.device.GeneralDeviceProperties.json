@@ -1,0 +1,41 @@
+{
+    "interface_name": "it.connectivity.device.GeneralDeviceProperties",
+    "mappings": [
+        {
+            "endpoint": "/lastResetTime",
+            "type": "datetime"
+        },
+        {
+            "endpoint": "/wifiMacAddress",
+            "type": "string"
+        },
+        {
+            "endpoint": "/firmwareRelease",
+            "type": "string"
+        },
+        {
+            "endpoint": "/serialNumber",
+            "type": "string"
+        },
+        {
+            "endpoint": "/wifiIpAddress",
+            "type": "string"
+        },
+        {
+            "endpoint": "/lastResetReason",
+            "type": "string"
+        },
+        {
+            "endpoint": "/wifiHostname",
+            "type": "string"
+        },
+        {
+            "endpoint": "/hardwareRelease",
+            "type": "string"
+        }
+    ],
+    "ownership": "device",
+    "type": "properties",
+    "version_major": 0,
+    "version_minor": 1
+}

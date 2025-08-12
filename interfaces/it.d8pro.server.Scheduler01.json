@@ -1,0 +1,156 @@
+{
+    "interface_name": "it.d8pro.server.Scheduler01",
+    "mappings": [
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 15768000,
+            "endpoint": "/ev9Data",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 15768000,
+            "endpoint": "/ev8Time",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 15768000,
+            "endpoint": "/ev7Time",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 15768000,
+            "endpoint": "/ev10Data",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 15768000,
+            "endpoint": "/ev6Data",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 15768000,
+            "endpoint": "/ev1Time",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 15768000,
+            "endpoint": "/ev9Time",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 15768000,
+            "endpoint": "/ev1Data",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 15768000,
+            "endpoint": "/ev2Time",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 15768000,
+            "endpoint": "/calendarEnabled",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 15768000,
+            "endpoint": "/ev3Time",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 15768000,
+            "endpoint": "/ev3Data",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 15768000,
+            "endpoint": "/ev7Data",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 15768000,
+            "endpoint": "/ev4Time",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 15768000,
+            "endpoint": "/ev10Time",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 15768000,
+            "endpoint": "/ev2Data",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 15768000,
+            "endpoint": "/ev8Data",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 15768000,
+            "endpoint": "/ev5Data",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 15768000,
+            "endpoint": "/ev4Data",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 15768000,
+            "endpoint": "/ev6Time",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 15768000,
+            "endpoint": "/ev5Time",
+            "explicit_timestamp": true,
+            "type": "integer"
+        }
+    ],
+    "ownership": "server",
+    "type": "datastream",
+    "version_major": 0,
+    "version_minor": 1
+}

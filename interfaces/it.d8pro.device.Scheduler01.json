@@ -1,0 +1,93 @@
+{
+    "interface_name": "it.d8pro.device.Scheduler01",
+    "mappings": [
+        {
+            "endpoint": "/ev8Time",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/ev1Time",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/ev2Data",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/ev9Data",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/ev6Time",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/ev4Data",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/ev3Time",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/ev9Time",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/ev2Time",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/ev5Time",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/ev4Time",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/ev8Data",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/ev7Data",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/ev10Data",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/ev7Time",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/ev10Time",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/ev6Data",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/calendarEnabled",
+            "type": "boolean"
+        },
+        {
+            "endpoint": "/ev1Data",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/ev3Data",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/ev5Data",
+            "type": "integer"
+        }
+    ],
+    "ownership": "device",
+    "type": "properties",
+    "version_major": 0,
+    "version_minor": 1
+}
