@@ -304,7 +304,7 @@ def set_coffee_references(device, simulator, status):
     simulator_status = status
     print("Web server: Coffee device and simulator references set")
 
-def start_web_server(host='localhost', port=5000):
+def start_web_server(host='0.0.0.0', port=5000):
     """Start the Flask web server in a separate thread."""
     def run_server():
         print(f"Starting web server at http://{host}:{port}")
@@ -776,4 +776,4 @@ ERROR_TEMPLATE = """
 
 if __name__ == '__main__':
     # For standalone testing
-    app.run(host='localhost', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
