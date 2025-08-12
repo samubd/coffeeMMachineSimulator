@@ -1,0 +1,57 @@
+{
+    "interface_name": "it.d8pro.device.AlarmEv01",
+    "mappings": [
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "description": "{\"0\": \"No error\",\"1\": \"Overcurrent\",\"2\": \"Open load\"}",
+            "endpoint": "/major/group1EvLoadingError",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "description": "{\"0\": \"No error\",\"1\": \"Overcurrent\",\"2\": \"Open load\"}",
+            "endpoint": "/major/waterEvLoadingError",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "description": "{\"0\": \"No error\",\"1\": \"Overcurrent\",\"2\": \"Open load\"}",
+            "endpoint": "/major/group3EvLoadingError",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "description": "{\"0\": \"No error\",\"1\": \"Overcurrent\",\"2\": \"Open load\"}",
+            "endpoint": "/major/mixEvLoadingError",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "description": "{\"0\": \"No error\",\"1\": \"Overcurrent\",\"2\": \"Open load\"}",
+            "endpoint": "/major/group2EvLoadingError",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 2628000,
+            "description": "{\"0\": \"No error\",\"1\": \"Overcurrent\",\"2\": \"Open load\"}",
+            "endpoint": "/critical/generalEvLoadingError",
+            "explicit_timestamp": true,
+            "type": "integer"
+        }
+    ],
+    "ownership": "device",
+    "type": "datastream",
+    "version_major": 0,
+    "version_minor": 2
+}

@@ -1,0 +1,262 @@
+{
+    "doc": "\"/display/enabled\" BOOL -> \"/display/userMenuConfig\" INT\n",
+    "interface_name": "it.d8pro.device.Settings03",
+    "mappings": [
+        {
+            "endpoint": "/preinfusion/singleOnDurationGr1",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/power/group3ModeSetting",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/power/ecoTimeout2",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/manteinance/waterFilterDuration",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/autosteamer/washingTimeout",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/ledBar/ecoLedLevel",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/preinfusion/doubleOnDurationGr1",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/ledBar/ecoLedEnabled",
+            "type": "boolean"
+        },
+        {
+            "endpoint": "/preinfusion/singleOnDurationGr3",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/display/userMenuConfig",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/doses/extraDoseEnabled",
+            "type": "boolean"
+        },
+        {
+            "endpoint": "/preinfusion/singleOffDurationGr1",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/userSettings/boilerTempUserEnabled",
+            "type": "boolean"
+        },
+        {
+            "endpoint": "/doses/doseProgrammingEnabled",
+            "type": "boolean"
+        },
+        {
+            "endpoint": "/preinfusion/doubleOffDurationGr2",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/machineSettings/password",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/userSettings/groupsTempUserEnabled",
+            "type": "boolean"
+        },
+        {
+            "endpoint": "/preinfusion/doubleOffDurationGr1",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/machineSettings/cupHeatingRange",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/groupNumber",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/preinfusion/doubleEnabledGr2",
+            "type": "boolean"
+        },
+        {
+            "endpoint": "/power/ecoTimeout3",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/preinfusion/singleOffDurationGr2",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/preinfusion/doubleOnDurationGr2",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/temperature/tempSetpointGr3",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/userSettings/userShortMenuEnabled",
+            "type": "boolean"
+        },
+        {
+            "endpoint": "/preinfusion/doubleOnDurationGr3",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/machineSettings/hartwallEnabled",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/temperature/tempSetpointBoiler",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/preinfusion/doubleOffDurationGr3",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/ledBar/ecoLedTimeout",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/preinfusion/singleOnDurationGr2",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/ledBar/ledBarEnabled",
+            "type": "boolean"
+        },
+        {
+            "endpoint": "/machineSettings/language",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/temperature/tempSetpointGr2",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/info/installationDate",
+            "type": "datetime"
+        },
+        {
+            "endpoint": "/autosteamer/washingDuration",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/preinfusion/doubleEnabledGr3",
+            "type": "boolean"
+        },
+        {
+            "endpoint": "/power/group2ModeSetting",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/power/ecoTimeout1",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/machineSettings/showMode",
+            "type": "boolean"
+        },
+        {
+            "endpoint": "/machineSettings/teaCoffeeErogationEnabled",
+            "type": "boolean"
+        },
+        {
+            "endpoint": "/preinfusion/singleEnabledGr3",
+            "type": "boolean"
+        },
+        {
+            "endpoint": "/machineSettings/erogationLoadEnabled",
+            "type": "boolean"
+        },
+        {
+            "endpoint": "/purge/duration",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/purge/enabled",
+            "type": "boolean"
+        },
+        {
+            "endpoint": "/machineSettings/manualWashingCycles",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/power/machineModeSetting",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/preinfusion/preinfusionSingleEnabled",
+            "type": "boolean"
+        },
+        {
+            "endpoint": "/preinfusion/singleEnabledGr2",
+            "type": "boolean"
+        },
+        {
+            "endpoint": "/doses/continuosDoseEnabled",
+            "type": "boolean"
+        },
+        {
+            "endpoint": "/preinfusion/singleOffDurationGr3",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/autosteamer/enabled",
+            "type": "boolean"
+        },
+        {
+            "endpoint": "/machineSettings/automaticWashingCycles",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/temperature/tempSetpointGr1",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/machineSettings/cupHeaterEnabled",
+            "type": "boolean"
+        },
+        {
+            "endpoint": "/manteinance/residualCoffeeForManteinance",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/machineSettings/probeSensitivity",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/machineSettings/temperatureUnit",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/fwVersion",
+            "type": "integer"
+        },
+        {
+            "endpoint": "/preinfusion/preinfusionDoubleEnabled",
+            "type": "boolean"
+        },
+        {
+            "endpoint": "/userSettings/preinfusionUserEnabled",
+            "type": "boolean"
+        },
+        {
+            "endpoint": "/machineSettings/pressureUnit",
+            "type": "integer"
+        }
+    ],
+    "ownership": "device",
+    "type": "properties",
+    "version_major": 0,
+    "version_minor": 1
+}

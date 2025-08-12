@@ -1,0 +1,458 @@
+{
+    "description": "\"/display/enabled\" BOOL --> \"/display/userMenuConfig\" INT\nChanged TTL to 12 months",
+    "interface_name": "it.d8pro.server.Settings03",
+    "mappings": [
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/autosteamer/washingDuration",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/preinfusion/doubleEnabledGr2",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/machineSettings/teaCoffeeErogationEnabled",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/preinfusion/singleOnDurationGr3",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/preinfusion/doubleOnDurationGr1",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/preinfusion/doubleOffDurationGr2",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/machineSettings/automaticWashingCycles",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/power/ecoTimeout3",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/preinfusion/preinfusionDoubleEnabled",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/machineSettings/password",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/userSettings/groupsTempUserEnabled",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/manteinance/residualCoffeeForManteinance",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/userSettings/boilerTempUserEnabled",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/machineSettings/hartwallEnabled",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/purge/duration",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/power/group2ModeSetting",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/ledBar/ecoLedEnabled",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/ledBar/ecoLedTimeout",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/machineSettings/cupHeatingRange",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/machineSettings/manualWashingCycles",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/machineSettings/language",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/machineSettings/groupNumberAtReboot",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/preinfusion/doubleOffDurationGr1",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/preinfusion/preinfusionSingleEnabled",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/doses/continuosDoseEnabled",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/manteinance/waterFilterDuration",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/autosteamer/washingTimeout",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/temperature/tempSetpointBoiler",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/userSettings/userShortMenuEnabled",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/preinfusion/singleOffDurationGr1",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/machineSettings/probeSensitivity",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/power/machineModeSetting",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/power/ecoTimeout2",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/ledBar/ecoLedLevel",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/wifiStatus",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/power/ecoTimeout1",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/doses/extraDoseEnabled",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/userSettings/preinfusionUserEnabled",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/doses/doseProgrammingEnabled",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/machineSettings/pressureUnit",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/machineSettings/fastModeEnabled",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/preinfusion/singleOffDurationGr2",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/power/group3ModeSetting",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/temperature/tempSetpointGr3",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/preinfusion/singleOffDurationGr3",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/preinfusion/singleOnDurationGr1",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/preinfusion/doubleEnabledGr3",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/temperature/tempSetpointGr1",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/display/userMenuConfig",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/machineSettings/temperatureUnit",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/machineSettings/erogationLoadEnabled",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/preinfusion/singleOnDurationGr2",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/preinfusion/doubleOnDurationGr3",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/preinfusion/doubleOffDurationGr3",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/autosteamer/enabled",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/machineSettings/cupHeaterEnabled",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/preinfusion/doubleOnDurationGr2",
+            "explicit_timestamp": true,
+            "type": "integer"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/preinfusion/singleEnabledGr3",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/info/installationDate",
+            "explicit_timestamp": true,
+            "type": "datetime"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/preinfusion/singleEnabledGr2",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/ledBar/ledBarEnabled",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/purge/enabled",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/machineSettings/showMode",
+            "explicit_timestamp": true,
+            "type": "boolean"
+        },
+        {
+            "database_retention_policy": "use_ttl",
+            "database_retention_ttl": 31536000,
+            "endpoint": "/temperature/tempSetpointGr2",
+            "explicit_timestamp": true,
+            "type": "integer"
+        }
+    ],
+    "ownership": "server",
+    "type": "datastream",
+    "version_major": 0,
+    "version_minor": 1
+}
