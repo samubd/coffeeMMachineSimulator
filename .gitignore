@@ -32,3 +32,6 @@ wheels/
 # OS
 .DS_Store
 Thumbs.db
+
+# Astarte
+astarte_persistence/
