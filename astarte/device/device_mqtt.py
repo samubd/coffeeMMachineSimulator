@@ -27,8 +27,8 @@ from datetime import datetime
 from pathlib import Path
 from urllib.parse import urlparse
 
-import bson
 import paho.mqtt.client as mqtt
+import bson
 
 from astarte.device import crypto, pairing_handler
 from astarte.device.database import AstarteDatabase, AstarteDatabaseSQLite
@@ -369,7 +369,7 @@ class DeviceMqtt(Device):
             object_payload = {"v": payload}
             if timestamp:
                 object_payload["t"] = timestamp
-            bson_payload = bson.dumps(object_payload)
+            bson_payload = bson.encode(object_payload)
         elif not interface.get_mapping(path):
             raise ValidationError(f"Path {path} not in the {interface.name} interface.")
 
@@ -511,7 +511,7 @@ class DeviceMqtt(Device):
         # Extract payload from BSON
         data_payload = None
         if msg.payload:
-            payload_object = bson.loads(msg.payload)
+            payload_object = bson.decode(msg.payload)
             if "v" not in payload_object:
                 logging.warning(
                     "Received unexpected BSON Object on topic %s, %s", msg.topic, payload_object
