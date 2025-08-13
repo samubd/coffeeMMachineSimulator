@@ -292,7 +292,7 @@ def manual_brew_coffee(coffee_type: int, group: str = "group1") -> Dict[str, Any
         print(f"Manual brewing coffee: group={group}, type={coffee_type}, erogTime={erog_time}, flowTotal={flow_total}")
         
         
-        brewingtime = erog_time
+        brewingtime = erog_time*10
         while (brewingtime >= 0):
             brewingtime = brewingtime - 20
             flowRate = random.randint(10, 60)
