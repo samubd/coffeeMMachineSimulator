@@ -108,22 +108,32 @@ class CoffeeMachineSimulator:
             erog_time = self._get_erog_time_for_coffee_type(group, coffee_type)
             flow_total = random.randint(300, 600)
             
-            current_time = datetime.now(ZoneInfo("Europe/Rome"))
-            
             print(f"Brewing coffee on {group}: type={coffee_type}, erogTime={erog_time}, flowTotal={flow_total}")
             
             brewingtime = erog_time
+            print(f"erogTime={erog_time}, brewingtime: {brewingtime}")
+            flowRate = 20
             while (brewingtime >= 0):
-                brewingtime = brewingtime - 20
-                flowRate = random.randint(10, 60)
+                brewingtime = brewingtime - 2
+                flowRate = flowRate + random.randint(-2, 3)
                 print(f"flowRate: {flowRate}")
+                time.sleep(0.2)
             
                 self.device.send(
-                    self.interface_name,
+                    "it.d8pro.device.TelemetryFast01",
                     f"/{group}/flowRate",
                     flowRate,
-                    timestamp=current_time
+                    timestamp=datetime.now(ZoneInfo("Europe/Rome"))
                 )
+            
+            self.device.send(
+                    "it.d8pro.device.TelemetryFast01",
+                    f"/{group}/flowRate",
+                    0,
+                    timestamp=datetime.now(ZoneInfo("Europe/Rome"))
+            )
+            
+            current_time = datetime.now(ZoneInfo("Europe/Rome"))
             
             # Send coffee type
             self.device.send(

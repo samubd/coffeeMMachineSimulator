@@ -370,6 +370,75 @@ def _send_status_updates(device: DeviceMqtt):
     except Exception as e:
         print(f"Error sending status updates: {e}")
 
+def _send_connectivity_status_updates(device: DeviceMqtt):
+    """
+    Send machine and group status updates after connection.
+    """
+    try:
+        from zoneinfo import ZoneInfo
+        current_time = datetime.now(ZoneInfo("Europe/Rome"))
+        
+        # Send machine status
+        print("Sending connectivity status...")
+        device.send(
+            "it.connectivity.device.GeneralDeviceProperties",
+            "/firmwareRelease",
+            "v1.2.2-sanremo-d8_wifi"
+        )
+        
+        # Small delay between sends
+        time.sleep(0.1)
+        
+        device.send(
+            "it.connectivity.device.GeneralDeviceProperties",
+            "/hardwareRelease",
+            "SIM1"
+        )
+        # Small delay between sends
+        time.sleep(0.1)        
+        device.send(
+            "it.connectivity.device.GeneralDeviceProperties",
+            "/wifiIpAddress",
+            "192.168.1.244"
+        )
+        # Small delay between sends
+        time.sleep(0.1)        
+        device.send(
+            "it.connectivity.device.GeneralDeviceProperties",
+            "/serialNumber",
+            "M123456"
+        )        
+        time.sleep(0.1)        
+        device.send(
+            "it.connectivity.device.GeneralDeviceProperties",
+            "/lastResetReason",
+            "forced reboot"
+        )           
+        time.sleep(0.1)        
+        device.send(
+            "it.connectivity.device.GeneralDeviceProperties",
+            "/wifiMacAddress",
+            "CD:AA:B4:23:11:A3"
+        )         
+        time.sleep(0.1)        
+        device.send(
+            "it.connectivity.device.GeneralDeviceProperties",
+            "/wifiHostname",
+            "KalpaGuest"
+        ) 
+        
+        time.sleep(0.1)   
+        
+        current_time = datetime.now(ZoneInfo("Europe/Rome"))     
+        device.send(
+            "it.connectivity.device.GeneralDeviceProperties",
+            "/lastResetTime",
+            current_time
+        )                 
+        print("All status updates sent successfully")
+        
+    except Exception as e:
+        print(f"Error sending status updates: {e}")
 
 def main(cb_loop: Optional[asyncio.AbstractEventLoop] = None):
 
@@ -451,6 +520,7 @@ def main(cb_loop: Optional[asyncio.AbstractEventLoop] = None):
     # Send machine and group status updates
     print("Sending machine and group status updates...")
     _send_status_updates(device)
+    _send_connectivity_status_updates(device)
     
     # Get current counters from the API
     print("Getting current counters...")

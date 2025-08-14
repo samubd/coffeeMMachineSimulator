@@ -80,6 +80,11 @@ def machine_interface_page():
         error_message = f"Error loading machine interface page: {str(e)}"
         return render_template_string(ERROR_TEMPLATE, error=error_message), 500
 
+@app.route('/alarms')
+def alarms_page():
+    """Display machine alarms simulation page."""
+    return send_from_directory('.', 'machine_alarms.html')
+
 @app.route('/status')
 def status_page():
     """Display comprehensive status page with all coffee machine data from LOCAL simulator."""
@@ -277,6 +282,75 @@ def brew_coffee():
         print(f"Error in brew_coffee: {e}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/send_alarm', methods=['POST'])
+def send_alarm():
+    """Send alarm data to the coffee machine."""
+    try:
+        data = request.json
+        
+        if not data:
+            return jsonify({'error': 'No alarm data provided'}), 400
+        
+        interface_name = data.get('interface')
+        path = data.get('path')
+        payload = data.get('payload')
+        
+        if not interface_name or not path or payload is None:
+            return jsonify({'error': 'Missing required fields: interface, path, payload'}), 400
+        
+        # Validate interface name
+        if interface_name not in ['it.d8pro.device.AlarmEv01', 'it.d8pro.device.AlarmStd02']:
+            return jsonify({'error': 'Invalid interface name'}), 400
+        
+        if not coffee_device or not coffee_device.is_connected():
+            return jsonify({'error': 'Coffee machine not connected'}), 500
+        
+        current_time = datetime.now(ZoneInfo("Europe/Rome"))
+        
+        # Send alarm to the device
+        try:
+            coffee_device.send(
+                interface_name,
+                path,
+                payload,
+                timestamp=current_time
+            )
+            
+            print(f"Alarm sent: {interface_name}{path} = {payload}")
+            
+            return jsonify({
+                'success': True,
+                'message': f'Alarm sent successfully: {path} = {payload}'
+            })
+            
+        except Exception as e:
+            print(f"Error sending alarm {interface_name}{path}: {e}")
+            return jsonify({'error': f'Failed to send alarm: {str(e)}'}), 500
+        
+    except Exception as e:
+        print(f"Error in send_alarm: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/connection_status', methods=['GET'])
+def connection_status():
+    """Get current connection status and timestamp."""
+    try:
+        connected = coffee_device and coffee_device.is_connected()
+        current_time = datetime.now(ZoneInfo("Europe/Rome")).strftime("%Y-%m-%d %H:%M:%S %Z")
+        
+        return jsonify({
+            'connected': connected,
+            'current_time': current_time
+        })
+        
+    except Exception as e:
+        print(f"Error in connection_status: {e}")
+        return jsonify({
+            'connected': False,
+            'current_time': datetime.now(ZoneInfo("Europe/Rome")).strftime("%Y-%m-%d %H:%M:%S %Z"),
+            'error': str(e)
+        })
+
 def manual_brew_coffee(coffee_type: int, group: str = "group1") -> Dict[str, Any]:
     """Manually brew a specific coffee type on a specific group."""
     try:
@@ -287,34 +361,56 @@ def manual_brew_coffee(coffee_type: int, group: str = "group1") -> Dict[str, Any
         erog_time = _get_erog_time_for_coffee_type(group, coffee_type)
         flow_total = random.randint(300, 600)
         
-        current_time = datetime.now(ZoneInfo("Europe/Rome"))
+        
         
         print(f"Manual brewing coffee: group={group}, type={coffee_type}, erogTime={erog_time}, flowTotal={flow_total}")
         
         
-        brewingtime = erog_time*10
+        brewingtime = erog_time
+        print(f"erogTime={erog_time}, brewingtime: {brewingtime}")
+        flowRate = 20
+        counterVolume = 0
         while (brewingtime >= 0):
-            brewingtime = brewingtime - 20
-            flowRate = random.randint(10, 60)
+            brewingtime = brewingtime - 2
+            flowRate = flowRate + random.randint(-2, 2)
+            if flowRate < 16:
+                flowRate = 16
+            
+            if flowRate > 40:
+                flowRate = 40
+                        
+
+            counterVolume = counterVolume + flowRate
+            
             print(f"flowRate: {flowRate}")
-            time.sleep(flowRate/100)
+            time.sleep(0.2)
         
             coffee_device.send(
                 "it.d8pro.device.TelemetryFast01",
                 f"/{group}/flowRate",
                 flowRate,
-                timestamp=current_time
+                timestamp=datetime.now(ZoneInfo("Europe/Rome"))
             )
+            if (counterVolume == flow_total):
+                brewingtime = 0
+        
+        coffee_device.send(
+                "it.d8pro.device.TelemetryFast01",
+                f"/{group}/flowRate",
+                0,
+                timestamp=datetime.now(ZoneInfo("Europe/Rome"))
+           )
         
         # Send coffee telemetry data
         coffee_device.send(
             "it.d8pro.device.TelemetryFast01",
             f"/{group}/coffeeType",
             coffee_type,
-            timestamp=current_time
+            timestamp=datetime.now(ZoneInfo("Europe/Rome"))
         )
         
         time.sleep(0.1)
+        current_time = datetime.now(ZoneInfo("Europe/Rome"))
         
         coffee_device.send(
             "it.d8pro.device.TelemetryFast01",
@@ -489,6 +585,7 @@ SETTINGS_PAGE_TEMPLATE = """
                 <a href="/status" class="nav-link">📊 Status Dashboard</a>
                 <a href="/settings" class="nav-link">⚙️ Settings</a>
                 <a href="/machine-interface" class="nav-link">🖥️ Machine Interface</a>
+                <a href="/alarms" class="nav-link">🚨 Alarms Simulation</a>
             </div>
 
             <div id="alert-container"></div>
@@ -1041,6 +1138,7 @@ MACHINE_INTERFACE_TEMPLATE = """
                 <a href="/status" class="nav-link">📊 Status Dashboard</a>
                 <a href="/settings" class="nav-link">⚙️ Settings</a>
                 <a href="/machine-interface" class="nav-link">🖥️ Machine Interface</a>
+                <a href="/alarms" class="nav-link">🚨 Alarms Simulation</a>
             </div>
 
             <div class="machine-container">
@@ -1235,6 +1333,7 @@ STATUS_PAGE_TEMPLATE = """
                 <a href="/status" class="nav-link">📊 Status Dashboard</a>
                 <a href="/settings" class="nav-link">⚙️ Settings</a>
                 <a href="/machine-interface" class="nav-link">🖥️ Machine Interface</a>
+                <a href="/alarms" class="nav-link">🚨 Alarms Simulation</a>
                 <button class="refresh-btn" onclick="location.reload()">🔄 Refresh</button>
             </div>
 
