@@ -357,6 +357,14 @@ def manual_brew_coffee(coffee_type: int, group: str = "group1") -> Dict[str, Any
         if not coffee_device or not coffee_device.is_connected():
             return {'success': False, 'error': 'Device not connected'}
         
+        # Check if the group is already brewing
+        if coffee_simulator and coffee_simulator.group_status.get(group) == "brewing":
+            return {'success': False, 'error': f'Group {group} is already brewing'}
+        
+        # Set group status to brewing
+        if coffee_simulator:
+            coffee_simulator.group_status[group] = "brewing"
+        
         # Generate coffee data using recipe-based erogation time
         erog_time = _get_erog_time_for_coffee_type(group, coffee_type)
         flow_total = random.randint(300, 600)
@@ -432,6 +440,10 @@ def manual_brew_coffee(coffee_type: int, group: str = "group1") -> Dict[str, Any
         if coffee_simulator and hasattr(coffee_simulator, '_update_and_send_counters'):
             coffee_simulator._update_and_send_counters(group, coffee_type, flow_total, current_time)
         
+        # Reset group status to idle after brewing is complete
+        if coffee_simulator:
+            coffee_simulator.group_status[group] = "idle"
+            
         return {
             'success': True,
             'erog_time': erog_time,
@@ -440,6 +452,9 @@ def manual_brew_coffee(coffee_type: int, group: str = "group1") -> Dict[str, Any
         
     except Exception as e:
         print(f"Error in manual_brew_coffee: {e}")
+        # Ensure status is reset even if an error occurs during brewing
+        if coffee_simulator:
+            coffee_simulator.group_status[group] = "idle"
         return {'success': False, 'error': str(e)}
 
 def _get_erog_time_for_coffee_type(group: str, coffee_type: int) -> int:

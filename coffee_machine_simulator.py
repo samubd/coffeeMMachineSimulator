@@ -27,6 +27,7 @@ class CoffeeMachineSimulator:
         self.coffee_types = [1, 2, 3, 4, 5, 6, 7]  # 7 different coffee types
         self.running = False
         self.threads = []
+        self.group_status = {group: "idle" for group in self.groups} # Track status of each group: idle, brewing
         
         # Initialize total litres tracking (in tens of ml to match flowTotal units)
         self.total_litres_tens_ml = 0
@@ -102,7 +103,15 @@ class CoffeeMachineSimulator:
         if not self.device.is_connected():
             return
             
+        # Check if the group is already brewing
+        if self.group_status.get(group) == "brewing":
+            print(f"Skipping brew for {group}: already brewing.")
+            return
+            
         try:
+            # Set group status to brewing
+            self.group_status[group] = "brewing"
+            
             # Generate random coffee data
             coffee_type = random.choice(self.coffee_types)
             erog_time = self._get_erog_time_for_coffee_type(group, coffee_type)
@@ -171,8 +180,13 @@ class CoffeeMachineSimulator:
             # Check if we need to update temperature for this group
             self._check_and_update_temperature(group, current_time)
             
+            # Reset group status to idle after brewing is complete
+            self.group_status[group] = "idle"
+            
         except Exception as e:
             print(f"Error brewing coffee on {group}: {e}")
+            # Ensure status is reset even if an error occurs during brewing
+            self.group_status[group] = "idle"
             
     def _send_initial_flow_errors(self):
         """Send initial flow error for each group at startup."""
