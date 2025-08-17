@@ -45,6 +45,7 @@ from getCurrentCounters import getCurrentCounters
 from getCurrentSettings import getCurrentSettings
 from getCurrentRecipes import getCurrentRecipes
 from getCurrentDoses import getCurrentDoses
+from getCurrentAlarms import getCurrentAlarms
 
 # Import web server (Flask may not be installed, so handle gracefully)
 try:
@@ -569,6 +570,18 @@ def main(cb_loop: Optional[asyncio.AbstractEventLoop] = None):
         print("Simulator status updated with current doses")
     else:
         print("Using default doses values")
+    
+    # Get current alarms from the local status file
+    print("Getting current alarms...")
+    current_alarms = getCurrentAlarms()
+    #print("Current alarms retrieved:", current_alarms)
+    
+    # Update simulator_status with retrieved alarms
+    if current_alarms:
+        simulator_status["alarms"] = current_alarms
+        print("Simulator status updated with current alarms")
+    else:
+        print("No current alarms found - starting with no alarms")
     
     # Initialize and start the coffee machine simulator
     coffee_simulator = CoffeeMachineSimulator(device, simulator_status)

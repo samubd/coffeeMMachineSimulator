@@ -581,6 +581,40 @@
             }, 5000);
         }
 
+        function loadAlarmStates() {
+            fetch('/api/get_alarm_states')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.alarms) {
+                        applyAlarmStates(data.alarms);
+                        console.log('Alarm states loaded:', data.alarms);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading alarm states:', error);
+                });
+        }
+
+        function applyAlarmStates(alarmStates) {
+            // Apply alarm states to the controls
+            Object.keys(alarmStates).forEach(alarmPath => {
+                const alarmValue = alarmStates[alarmPath];
+
+                // Find the corresponding control
+                const controls = document.querySelectorAll('[data-path="' + alarmPath + '"]');
+
+                controls.forEach(control => {
+                    if (control.type === 'checkbox') {
+                        // For boolean alarms (toggles)
+                        control.checked = Boolean(alarmValue);
+                    } else if (control.tagName === 'SELECT') {
+                        // For integer alarms (dropdowns)
+                        control.value = alarmValue;
+                    }
+                });
+            });
+        }
+
         function updateConnectionStatus() {
             fetch('/api/connection_status')
                 .then(response => response.json())
@@ -609,6 +643,11 @@
         document.addEventListener('DOMContentLoaded', function () {
             generateAlarmControls();
             updateConnectionStatus();
+
+            // Load current alarm states after controls are generated
+            setTimeout(() => {
+                loadAlarmStates();
+            }, 500); // Small delay to ensure controls are generated
 
             // Update connection status every 30 seconds
             setInterval(updateConnectionStatus, 30000);

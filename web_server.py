@@ -13,17 +13,39 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from typing import Dict, Any
 import json
+import os # Added import
 
-# Import data retrieval functions
-from getCurrentCounters import getCurrentCounters
-from getCurrentSettings import getCurrentSettings
-from getCurrentDoses import getCurrentDoses
-from getCurrentRecipes import getCurrentRecipes
+STATUS_FILE = 'status.json'
+
+def load_simulator_status():
+    """Load simulator status from a JSON file."""
+    if os.path.exists(STATUS_FILE):
+        try:
+            with open(STATUS_FILE, 'r') as f:
+                return json.load(f)
+        except json.JSONDecodeError:
+            print(f"Error decoding JSON from {STATUS_FILE}. Starting with empty status.")
+            return {}
+        except Exception as e:
+            print(f"Error loading simulator status from {STATUS_FILE}: {e}. Starting with empty status.")
+            return {}
+    return {}
+
+def save_simulator_status(status_data):
+    """Save simulator status to a JSON file."""
+    try:
+        with open(STATUS_FILE, 'w') as f:
+            json.dump(status_data, f, indent=4)
+    except Exception as e:
+        print(f"Error saving simulator status to {STATUS_FILE}: {e}")
+
+# Load status at the beginning
+simulator_status = load_simulator_status()
 
 # Global variables to store the device and simulator references
 coffee_device = None
 coffee_simulator = None
-simulator_status = None
+# simulator_status = None # Removed the problematic reassignment to None
 
 app = Flask(__name__)
 
@@ -307,6 +329,30 @@ def send_alarm():
         
         current_time = datetime.now(ZoneInfo("Europe/Rome"))
         
+        # --- ADD ALARM SIMULATION LOGIC ---
+        if payload == "critical":
+            # If critical alarm, prevent brewing
+            if coffee_simulator:
+                coffee_simulator.critical_alarm = True
+        elif payload == "major":
+            # For major alarms, track affected groups, considering exceptions
+            import re
+            group_match = re.search(r'/major/(group\d+)', path)
+            if group_match:
+                group_name = group_match.group(1)
+                # Exceptions: these major alarms do NOT affect brewing
+                exception_paths = [
+                    '/major/cupNtcOpen',
+                    '/major/cupNtcShort',
+                    '/major/cupHeatingTimeout'
+                ]
+                if path not in exception_paths:
+                    if coffee_simulator:
+                        if not hasattr(coffee_simulator, 'major_alarms'):
+                            coffee_simulator.major_alarms = {}
+                        coffee_simulator.major_alarms[group_name] = True
+        # --- END ALARM SIMULATION LOGIC ---
+        
         # Send alarm to the device
         try:
             coffee_device.send(
@@ -317,6 +363,15 @@ def send_alarm():
             )
             
             print(f"Alarm sent: {interface_name}{path} = {payload}")
+            
+            # --- ADD THIS PART ---
+            # Call the simulator's set_alarm method to update its internal state
+            if coffee_simulator and hasattr(coffee_simulator, 'set_alarm'):
+                coffee_simulator.set_alarm(path, payload)
+            # --- END ADDITION ---
+            
+            # Save the updated simulator status to persist changes
+            save_simulator_status(simulator_status)
             
             return jsonify({
                 'success': True,
@@ -330,6 +385,28 @@ def send_alarm():
     except Exception as e:
         print(f"Error in send_alarm: {e}")
         return jsonify({'error': str(e)}), 500
+
+@app.route('/api/get_alarm_states', methods=['GET'])
+def get_alarm_states():
+    """Get current alarm states from the local simulator status."""
+    try:
+        # Get alarm states from simulator status
+        alarm_states = {}
+        if simulator_status and 'alarms' in simulator_status:
+            alarm_states = simulator_status['alarms']
+        
+        return jsonify({
+            'success': True,
+            'alarms': alarm_states
+        })
+        
+    except Exception as e:
+        print(f"Error in get_alarm_states: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'alarms': {}
+        }), 500
 
 @app.route('/api/connection_status', methods=['GET'])
 def connection_status():
@@ -360,6 +437,61 @@ def manual_brew_coffee(coffee_type: int, group: str = "group1") -> Dict[str, Any
         # Check if the group is already brewing
         if coffee_simulator and coffee_simulator.group_status.get(group) == "brewing":
             return {'success': False, 'error': f'Group {group} is already brewing'}
+        
+        # --- ALARM CHECKS (same as in coffee_machine_simulator.py) ---
+        if coffee_simulator:
+            # 1. Critical Alarms: Prevents all brewing
+            critical_alarms = {
+                "/critical/generalLoadingTimeout",
+                "/critical/boilerNtcOpen", 
+                "/critical/boilerNtcShort",
+                "/critical/boilerHeatingTimeout"
+            }
+            
+            for alarm_path in critical_alarms:
+                if coffee_simulator.active_alarms.get(alarm_path, False):
+                    return {'success': False, 'error': f'Cannot brew on {group}: Critical alarm \'{alarm_path}\' is active'}
+            
+            # 2. Major Alarms: Affect specific groups, except for certain exceptions
+            group_blocking_major_alarms = {
+                "group1": [
+                    "/major/group1HeatingTimeout",
+                    "/major/group1HmiCommError",
+                    "/major/group1NtcOpen", 
+                    "/major/group1NtcShort"
+                ],
+                "group2": [
+                    "/major/group2HeatingTimeout",
+                    "/major/group2HmiCommError",
+                    "/major/group2NtcOpen",
+                    "/major/group2NtcShort"
+                ],
+                "group3": [
+                    "/major/group3HeatingTimeout",
+                    "/major/group3HmiCommError",
+                    "/major/group3NtcOpen",
+                    "/major/group3NtcShort"
+                ]
+            }
+            
+            non_blocking_major_alarms = {
+                "/major/cupNtcOpen",
+                "/major/cupNtcShort", 
+                "/major/cupHeatingTimeout"
+            }
+            
+            # Check for active major alarms
+            for alarm_path, is_active in coffee_simulator.active_alarms.items():
+                if is_active and alarm_path.startswith("/major/"):
+                    # Skip non-blocking major alarms
+                    if alarm_path in non_blocking_major_alarms:
+                        continue
+                    
+                    # Check if this is a blocking major alarm for the current group
+                    if group in group_blocking_major_alarms:
+                        if alarm_path in group_blocking_major_alarms[group]:
+                            return {'success': False, 'error': f'Cannot brew on {group}: Blocking major alarm \'{alarm_path}\' is active'}
+        # --- END ALARM CHECKS ---
         
         # Set group status to brewing
         if coffee_simulator:

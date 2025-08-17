@@ -28,6 +28,41 @@ class CoffeeMachineSimulator:
         self.running = False
         self.threads = []
         self.group_status = {group: "idle" for group in self.groups} # Track status of each group: idle, brewing
+        # Load active alarms from simulator_status if available
+        self.active_alarms: Dict[str, bool] = self.simulator_status.get('alarms', {}) # Store active alarms, e.g., {"/critical/general": True, "/major/group3HeatingTimeout": True}
+
+        # Define alarm types for easier management
+        self.critical_alarms = {
+            "/critical/generalLoadingTimeout",
+            "/critical/boilerNtcOpen",
+            "/critical/boilerNtcShort",
+            "/critical/boilerHeatingTimeout"
+        }
+        self.group_blocking_major_alarms = {
+            "group1": [
+                "/major/group1HeatingTimeout",
+                "/major/group1HmiCommError",
+                "/major/group1NtcOpen",
+                "/major/group1NtcShort"
+            ],
+            "group2": [
+                "/major/group2HeatingTimeout",
+                "/major/group2HmiCommError",
+                "/major/group2NtcOpen",
+                "/major/group2NtcShort"
+            ],
+            "group3": [
+                "/major/group3HeatingTimeout",
+                "/major/group3HmiCommError",
+                "/major/group3NtcOpen",
+                "/major/group3NtcShort"
+            ]
+        }
+        self.non_blocking_major_alarms = {
+            "/major/cupNtcOpen",
+            "/major/cupNtcShort",
+            "/major/cupHeatingTimeout"
+        }
         
         # Initialize total litres tracking (in tens of ml to match flowTotal units)
         self.total_litres_tens_ml = 0
@@ -36,6 +71,29 @@ class CoffeeMachineSimulator:
         # Initialize temperature tracking
         self.last_temp_update = {}  # Track last temperature update time for each group
         self.current_temps = {}     # Track current temperatures for each group
+        
+    def set_alarm(self, alarm_path: str, payload):
+        """Set or unset an alarm. Handles both boolean and integer payloads."""
+        # Convert payload to boolean for internal storage
+        # For boolean payloads: True/False
+        # For integer payloads: 0 = False, non-zero = True
+        if isinstance(payload, bool):
+            active = payload
+        elif isinstance(payload, int):
+            active = payload != 0
+        else:
+            # Try to convert to boolean
+            active = bool(payload)
+        
+        print(f"Setting alarm '{alarm_path}' to {active} (original payload: {payload})")
+        self.active_alarms[alarm_path] = active
+        
+        # Also update the simulator_status to persist the alarm state
+        if self.simulator_status is not None:
+            if 'alarms' not in self.simulator_status:
+                self.simulator_status['alarms'] = {}
+            self.simulator_status['alarms'][alarm_path] = active
+            print(f"Updated simulator_status alarms: {alarm_path} = {active}")
         
     def start_simulation(self):
         """Start the coffee machine simulation."""
@@ -103,6 +161,37 @@ class CoffeeMachineSimulator:
         if not self.device.is_connected():
             return
             
+        # --- Alarm Checks ---
+        # --- Alarm Checks ---
+        # 1. Critical Alarms: Prevents all brewing
+        for alarm_path in self.critical_alarms:
+            if self.active_alarms.get(alarm_path, False):
+                print(f"Cannot brew on {group}: Critical alarm '{alarm_path}' is active.")
+                self.group_status[group] = "idle"
+                return
+
+        # 2. Major Alarms: Affect specific groups, except for certain exceptions.
+        is_blocking_major_alarm_active = False
+        
+        # Check for active major alarms
+        for alarm_path, is_active in self.active_alarms.items():
+            if is_active and alarm_path.startswith("/major/"):
+                # Skip non-blocking major alarms
+                if alarm_path in self.non_blocking_major_alarms:
+                    continue
+                
+                # Check if this is a blocking major alarm for the current group
+                if group in self.group_blocking_major_alarms:
+                    if alarm_path in self.group_blocking_major_alarms[group]:
+                        print(f"Cannot brew on {group}: Blocking major alarm '{alarm_path}' is active.")
+                        is_blocking_major_alarm_active = True
+                        break # Found a blocking alarm for this group
+        
+        if is_blocking_major_alarm_active:
+            self.group_status[group] = "idle"
+            return
+        # --- End Alarm Checks ---
+
         # Check if the group is already brewing
         if self.group_status.get(group) == "brewing":
             print(f"Skipping brew for {group}: already brewing.")
