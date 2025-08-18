@@ -546,7 +546,7 @@ def main(cb_loop: Optional[asyncio.AbstractEventLoop] = None):
         print("Simulator status updated with current settings")
     else:
         print("Using default settings values")
-    """
+    
     # Get current recipes from the API
     print("Getting current recipes...")
     current_recipes = getCurrentRecipes()
@@ -558,7 +558,7 @@ def main(cb_loop: Optional[asyncio.AbstractEventLoop] = None):
         print("Simulator status updated with current recipes")
     else:
         print("Using default recipes values")
-    """
+    
     # Get current doses from the API
     print("Getting current doses...")
     current_doses = getCurrentDoses()

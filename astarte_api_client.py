@@ -232,6 +232,40 @@ class AstarteAPIClient:
         if data:
             print('Doses data:', data)
         return data
+    def get_token_with_password_grant(self):
+        """Ottiene un token JWT utilizzando il grant type 'password'."""
+        
+        # Dati di configurazione di Keycloak (come prima)
+        KEYCLOAK_URL = "https://kc-iceberg-1.kalpa.it"
+        REALM_NAME = "sanremodev"
+        CLIENT_ID = "riseberg-web"
+        USERNAME = "samuele.vecchi"  # Sostituisci con lo username dell'utente
+        PASSWORD = "12.T1rzan.21"  # Sostituisci con la password dell'utente
+        
+        # Endpoint di Keycloak per l'ottenimento del token
+        TOKEN_ENDPOINT = f"{KEYCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/token"
+        
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+        data = {
+            "grant_type": "password",
+            "client_id": CLIENT_ID,
+            "username": USERNAME,
+            "password": PASSWORD,
+            "scope": "openid profile email"  # Definisci gli scope necessari
+        }
+
+        try:
+            response = requests.post(TOKEN_ENDPOINT, headers=headers, data=data)
+            response.raise_for_status()  # Solleva un'eccezione per codici di stato HTTP non riusciti
+            token_data = response.json()
+            return token_data
+        except requests.exceptions.RequestException as e:
+            print(f"Errore durante la richiesta del token: {e}")
+            if response is not None:
+                print(f"Risposta del server: {response.status_code} - {response.text}")
+            return None    
     
     def get_recipes_for_group(self, group: str) -> Optional[Dict[str, Any]]:
         """
@@ -244,26 +278,32 @@ class AstarteAPIClient:
             dict: Recipe data if successful, None otherwise
         """
         try:
-            # Get fresh token if needed
+            """# Get fresh token if needed
             if not self.access_token:
                 if not self._get_jwt_token():
-                    return None
-            
+                    return None"""
+            token_response = self.get_token_with_password_grant()
+            access_token = token_response["access_token"]
             headers = {
-                'Authorization': f'Bearer {self.access_token}',
-                'Connection': 'close'  # Force connection close to prevent connection pooling issues
+                'Authorization': f'Bearer {access_token}',
+                'Content-Type': 'Application/json',
+                'Accept': 'Application/json, text/plain, */*',
+                'accept-encoding': 'gzip, deflate, br, zstd'
             }
 
             url = f"https://services.sanremomachines.com/backend/recipe-definition/device/{self.device_id}?erogationGroup={group}"
             print(f"Getting recipes for {group} from: {url}")
-            
+            """
             # Use session with timeout and proper error handling
             response = self.session.get(
                 url, 
                 headers=headers,
                 timeout=(10, 30)  # 10s connect, 30s read timeout
             )
+            """
+            response = requests.get(url, headers=headers)
             print(f'GET recipes for {group} return code:', response.status_code)
+            print('Recipe response detail:', response.text)
             
             if response.status_code == 200:
                 data = response.json()
@@ -279,6 +319,8 @@ class AstarteAPIClient:
                         headers=headers,
                         timeout=(10, 30)
                     )
+                    print(f'GET recipes retry return code:', response.status_code)
+                    print('Recipe retry response detail:', response.text)
                     if response.status_code == 200:
                         return response.json()
                 

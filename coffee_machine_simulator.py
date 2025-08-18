@@ -221,7 +221,8 @@ class CoffeeMachineSimulator:
                 delta = random.randint(-2, 3)
                 flowRate = flowRate + delta/10
                 flowRate = max(min(5, flowRate), .5)
-                print(f"flowRate: {flowRate:.1f} ml/s, brewed volume: {volume:.1f}")
+                progress = 1000*volume/flow_total
+                print(f"flowRate: {flowRate:.1f} ml/s, brewed volume: {volume:.1f}, progress: {progress:.1f}%")
                 time.sleep(step)
             
                 self.device.send(

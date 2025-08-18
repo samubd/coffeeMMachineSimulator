@@ -48,3 +48,20 @@ def getCurrentRecipes() -> Optional[Dict[str, Any]]:
     except Exception as e:
         print(f"Error in getCurrentRecipes: {e}")
         return None
+
+
+if __name__ == "__main__":
+    print("Starting recipe retrieval test...")
+    recipes = getCurrentRecipes()
+    
+    if recipes:
+        print("\n=== RECIPE RETRIEVAL SUCCESS ===")
+        for group, data in recipes.items():
+            print(f"\n{group.upper()} recipes:")
+            if data:
+                print(f"  - Found {len(data)} recipe items" if isinstance(data, (list, dict)) else f"  - Data: {data}")
+            else:
+                print("  - No recipes found")
+    else:
+        print("\n=== RECIPE RETRIEVAL FAILED ===")
+        print("No recipes were retrieved")
