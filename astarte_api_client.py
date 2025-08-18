@@ -283,6 +283,9 @@ class AstarteAPIClient:
                 if not self._get_jwt_token():
                     return None"""
             token_response = self.get_token_with_password_grant()
+            if token_response is None:
+                print("Failed to get token from password grant")
+                return None
             access_token = token_response["access_token"]
             headers = {
                 'Authorization': f'Bearer {access_token}',
