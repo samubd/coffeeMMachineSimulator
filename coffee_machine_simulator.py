@@ -212,27 +212,31 @@ class CoffeeMachineSimulator:
             print(f"Brewing coffee on {group}: type={coffee_type}, erogTime={erog_time}, flowTotal={flow_total}")
             
             volume = 0 # volume in ml
-            print(f"flow={volume}, volume: {flow_total}")
+            #print(f"flow={volume}, volume: {flow_total}")
            
-            flowRate = 2 # 2 ml/sec
+            flowRate = flow_total/erog_time # 2 ml/sec
+            print(f"computed flow rate: {flowRate} ml/sec")
             step = 0.2
+            timer=0
             while (volume <= flow_total/10):
                 volume = volume + flowRate*0.2
-                delta = random.randint(-2, 3)
+                delta = random.randint(-1, 1)
                 flowRate = flowRate + delta/10
                 flowRate = max(min(5, flowRate), .5)
                 progress = 1000*volume/flow_total
-                print(f"flowRate: {flowRate:.1f} ml/s, brewed volume: {volume:.1f}, progress: {progress:.1f}%")
+                print(f"\rflowRate: {flowRate:.1f} ml/s, brewed volume: {volume:.1f}, progress: {progress:.1f}%", end='', flush=True)
+                timer=timer + step
                 time.sleep(step)
             
                 self.device.send(
                     "it.d8pro.device.TelemetryFast01",
                     f"/{group}/flowRate",
-                    int(flowRate),
+                    int(10*flowRate),
                     timestamp=datetime.now(ZoneInfo("Europe/Rome"))
                 )
             
-            print(f"flowRate: {flowRate:.1f} ml/s, brewed volume: {volume:.1f}")
+            #print(f"\nflowRate: {flowRate:.1f} ml/s, brewed volume: {volume:.1f}")
+            #print(f"timer: {10*timer}")
             
             self.device.send(
                     "it.d8pro.device.TelemetryFast01",
@@ -243,6 +247,7 @@ class CoffeeMachineSimulator:
             
             current_time = datetime.now(ZoneInfo("Europe/Rome"))
             
+            
             # Send coffee type
             self.device.send(
                 self.interface_name,
@@ -250,7 +255,7 @@ class CoffeeMachineSimulator:
                 coffee_type,
                 timestamp=current_time
             )
-            
+            #print(f"sent coffee_type: {coffee_type}")
             # Small delay between sends
             time.sleep(0.1)
             
@@ -258,10 +263,10 @@ class CoffeeMachineSimulator:
             self.device.send(
                 self.interface_name,
                 f"/{group}/erogTime",
-                erog_time,
+                int(10*timer),
                 timestamp=current_time
             )
-            
+            #print(f"sent erogTime: {int(10*timer)}")
             # Small delay between sends
             time.sleep(0.1)
             
@@ -272,7 +277,7 @@ class CoffeeMachineSimulator:
                 flow_total,
                 timestamp=current_time
             )
-            
+            #print(f"sent flow_total: {flow_total}")
             # Update counters and send to Counters02 interface
             self._update_and_send_counters(group, coffee_type, flow_total, current_time)
             
