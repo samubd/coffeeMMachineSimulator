@@ -107,6 +107,28 @@ def alarms_page():
     """Display machine alarms simulation page."""
     return send_from_directory('.', 'machine_alarms.html')
 
+@app.route('/logs')
+def logs_page():
+    """Display brewing logs page."""
+    try:
+        # Get connection status
+        connection_status = "Connected" if (coffee_device and coffee_device.is_connected()) else "Disconnected"
+        
+        # Get current timestamp
+        current_time = datetime.now(ZoneInfo("Europe/Rome")).strftime("%Y-%m-%d %H:%M:%S %Z")
+        
+        # Prepare data for template
+        logs_data = {
+            'connection_status': connection_status,
+            'current_time': current_time
+        }
+        
+        return render_template_string(LOGS_PAGE_TEMPLATE, **logs_data)
+        
+    except Exception as e:
+        error_message = f"Error loading logs page: {str(e)}"
+        return render_template_string(ERROR_TEMPLATE, error=error_message), 500
+
 @app.route('/status')
 def status_page():
     """Display comprehensive status page with all coffee machine data from LOCAL simulator."""
@@ -264,7 +286,7 @@ def update_doses():
 
 @app.route('/api/brew_coffee', methods=['POST'])
 def brew_coffee():
-    """Manually trigger coffee brewing for a specific type on a specific group."""
+    """Manually trigger coffee brewing for a specific type on a specific group using the simulator's _brew_coffee method."""
     try:
         data = request.json
         
@@ -283,22 +305,26 @@ def brew_coffee():
         if not coffee_device or not coffee_device.is_connected():
             return jsonify({'error': 'Coffee machine not connected'}), 500
         
-        # Simulate brewing coffee manually
-        brewing_result = manual_brew_coffee(coffee_type, group)
+        if not coffee_simulator:
+            return jsonify({'error': 'Coffee simulator not available'}), 500
         
-        if brewing_result['success']:
+        # Use the coffee machine simulator's _brew_coffee method
+        try:
+            coffee_simulator._brew_coffee(group, coffee_type)
+            
             return jsonify({
                 'success': True,
                 'message': f'Coffee K{coffee_type} brewed successfully on {group}',
                 'brewing_info': {
                     'coffee_type': coffee_type,
                     'group': group,
-                    'duration': brewing_result['erog_time'],
-                    'flow_total': brewing_result['flow_total']
+                    'note': 'Using simulator _brew_coffee method with doses'
                 }
             })
-        else:
-            return jsonify({'error': 'Failed to brew coffee'}), 500
+        
+        except Exception as brew_error:
+            print(f"Error in _brew_coffee: {brew_error}")
+            return jsonify({'error': f'Brewing failed: {str(brew_error)}'}), 500
             
     except Exception as e:
         print(f"Error in brew_coffee: {e}")
@@ -427,6 +453,36 @@ def connection_status():
             'current_time': datetime.now(ZoneInfo("Europe/Rome")).strftime("%Y-%m-%d %H:%M:%S %Z"),
             'error': str(e)
         })
+
+@app.route('/api/get_brewing_logs', methods=['GET'])
+def get_brewing_logs():
+    """Get brewing logs from the local simulator status."""
+    try:
+        # Get brewing logs from simulator status
+        logs = []
+        if simulator_status and 'brewing_logs' in simulator_status:
+            logs = simulator_status['brewing_logs']
+            
+            # Sort logs by timestamp (newest first)
+            logs = sorted(logs, key=lambda x: x['timestamp'], reverse=True)
+            
+            # Limit to last 500 entries for performance
+            logs = logs[:500]
+        
+        return jsonify({
+            'success': True,
+            'logs': logs,
+            'count': len(logs)
+        })
+        
+    except Exception as e:
+        print(f"Error in get_brewing_logs: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'logs': [],
+            'count': 0
+        }), 500
 
 def manual_brew_coffee(coffee_type: int, group: str = "group1") -> Dict[str, Any]:
     """Manually brew a specific coffee type on a specific group."""
@@ -571,6 +627,10 @@ def manual_brew_coffee(coffee_type: int, group: str = "group1") -> Dict[str, Any
         # Update counters if simulator is available
         if coffee_simulator and hasattr(coffee_simulator, '_update_and_send_counters'):
             coffee_simulator._update_and_send_counters(group, coffee_type, flow_total, current_time)
+        
+        # Add log entry for this manual brewing event
+        if coffee_simulator and hasattr(coffee_simulator, '_add_brewing_log'):
+            coffee_simulator._add_brewing_log(group, coffee_type, erog_time, flow_total, current_time, "manual")
         
         # Reset group status to idle after brewing is complete
         if coffee_simulator:
@@ -733,6 +793,7 @@ SETTINGS_PAGE_TEMPLATE = """
                 <a href="/settings" class="nav-link">⚙️ Settings</a>
                 <a href="/machine-interface" class="nav-link">🖥️ Machine Interface</a>
                 <a href="/alarms" class="nav-link">🚨 Alarms Simulation</a>
+                <a href="/logs" class="nav-link">📋 Brewing Logs</a>
             </div>
 
             <div id="alert-container"></div>
@@ -1514,6 +1575,35 @@ STATUS_PAGE_TEMPLATE = """
             </div>
 
             <div class="section">
+                <div class="section-header">💧 Coffee Doses</div>
+                <div class="section-content">
+                    {% if doses and doses.data %}
+                        <div class="grid">
+                            {% for group_name, group_data in doses.data.items() %}
+                                <div class="card">
+                                    <div class="card-title">{{ group_name.title() }}</div>
+                                    <table class="data-table">
+                                        <thead><tr><th>Coffee Type</th><th>Dose (ml)</th><th>Last Updated</th></tr></thead>
+                                        <tbody>
+                                            {% for dose_type, data in group_data.items() %}
+                                                <tr>
+                                                    <td>{{ dose_type.upper() }}</td>
+                                                    <td><span class="value">{{ data.value if data.value is not none else 'N/A' }}</span></td>
+                                                    <td class="timestamp">{{ data.timestamp[:19] if data.timestamp else 'N/A' }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="no-data">No doses data available</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="section">
                 <div class="section-header">⚙️ Machine Settings</div>
                 <div class="section-content">
                     {% if settings and settings.data %}
@@ -1570,6 +1660,338 @@ ERROR_TEMPLATE = """
         <div class="error-message">{{ error }}</div>
         <a href="/" class="back-link">← Back to Control Panel</a>
     </div>
+</body>
+</html>
+"""
+
+LOGS_PAGE_TEMPLATE = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Machine Logs</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5; color: #333; }
+        .container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #6B4E3D, #8B6F47); color: white; padding: 30px; text-align: center; }
+        .header h1 { margin: 0; font-size: 2.5em; font-weight: 300; }
+        .status-info { display: flex; justify-content: space-between; margin-top: 15px; font-size: 1.1em; }
+        .status-connected { color: #4CAF50; font-weight: bold; }
+        .status-disconnected { color: #f44336; font-weight: bold; }
+        .content { padding: 30px; }
+        .navigation { text-align: center; margin-bottom: 30px; }
+        .nav-link { color: #6B4E3D; text-decoration: none; margin: 0 15px; font-weight: 500; }
+        .nav-link:hover { text-decoration: underline; }
+        .controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
+        .filters { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .filter-group { display: flex; align-items: center; gap: 5px; }
+        .filter-label { font-weight: 500; color: #495057; }
+        .filter-select { padding: 5px 10px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; }
+        .btn { background: #6B4E3D; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 5px; }
+        .btn:hover { background: #5a3e2d; }
+        .btn-secondary { background: #6c757d; }
+        .btn-secondary:hover { background: #5a6268; }
+        .btn-success { background: #28a745; }
+        .btn-success:hover { background: #218838; }
+        .logs-section { border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; }
+        .section-header { background: #f8f9fa; padding: 15px 20px; border-bottom: 1px solid #e0e0e0; font-size: 1.3em; font-weight: 600; color: #495057; display: flex; justify-content: space-between; align-items: center; }
+        .log-count { font-size: 0.9em; color: #6c757d; font-weight: normal; }
+        .logs-table { width: 100%; border-collapse: collapse; }
+        .logs-table th, .logs-table td { padding: 12px; text-align: left; border-bottom: 1px solid #dee2e6; }
+        .logs-table th { background: #e9ecef; font-weight: 600; color: #495057; position: sticky; top: 0; z-index: 10; }
+        .logs-table tbody tr:hover { background: #f8f9fa; }
+        .timestamp { font-family: 'Courier New', monospace; font-size: 0.9em; }
+        .group { font-weight: 600; }
+        .group.group1 { color: #dc3545; }
+        .group.group2 { color: #28a745; }
+        .group.group3 { color: #007bff; }
+        .coffee-type { font-weight: 600; padding: 3px 8px; border-radius: 12px; font-size: 0.85em; color: white; }
+        .coffee-type.k1 { background: #8B0000; }
+        .coffee-type.k2 { background: #D2691E; }
+        .coffee-type.k3 { background: #B8860B; }
+        .coffee-type.k4 { background: #228B22; }
+        .coffee-type.k5 { background: #4682B4; }
+        .coffee-type.k6 { background: #9932CC; }
+        .coffee-type.k7 { background: #FF1493; }
+        .duration { font-family: 'Courier New', monospace; color: #495057; }
+        .volume { font-family: 'Courier New', monospace; color: #495057; }
+        .source { padding: 3px 8px; border-radius: 12px; font-size: 0.85em; font-weight: 600; }
+        .source.simulator { background: #e7f3ff; color: #0056b3; }
+        .source.manual { background: #fff3cd; color: #856404; }
+        .no-logs { text-align: center; padding: 40px; color: #6c757d; font-style: italic; }
+        .loading { text-align: center; padding: 40px; color: #6c757d; }
+        .logs-container { max-height: 600px; overflow-y: auto; }
+        
+        /* Auto-refresh indicator */
+        .refresh-indicator { display: inline-block; margin-left: 10px; }
+        .refresh-indicator.active { color: #28a745; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Brewing Logs</h1>
+            <div class="status-info">
+                <span>Connection: <span class="{{ 'status-connected' if connection_status == 'Connected' else 'status-disconnected' }}">{{ connection_status }}</span></span>
+                <span>Last Updated: {{ current_time }}</span>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="navigation">
+                <a href="/" class="nav-link">🏠 Control Panel</a>
+                <a href="/status" class="nav-link">📊 Status Dashboard</a>
+                <a href="/settings" class="nav-link">⚙️ Settings</a>
+                <a href="/machine-interface" class="nav-link">🖥️ Machine Interface</a>
+                <a href="/alarms" class="nav-link">🚨 Alarms Simulation</a>
+                <a href="/logs" class="nav-link">📋 Brewing Logs</a>
+            </div>
+
+            <div class="controls">
+                <div class="filters">
+                    <div class="filter-group">
+                        <label class="filter-label">Group:</label>
+                        <select id="group-filter" class="filter-select">
+                            <option value="">All Groups</option>
+                            <option value="group1">Group 1</option>
+                            <option value="group2">Group 2</option>
+                            <option value="group3">Group 3</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Coffee Type:</label>
+                        <select id="coffee-filter" class="filter-select">
+                            <option value="">All Types</option>
+                            <option value="1">K1</option>
+                            <option value="2">K2</option>
+                            <option value="3">K3</option>
+                            <option value="4">K4</option>
+                            <option value="5">K5</option>
+                            <option value="6">K6</option>
+                            <option value="7">K7</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Source:</label>
+                        <select id="source-filter" class="filter-select">
+                            <option value="">All Sources</option>
+                            <option value="simulator">Simulator</option>
+                            <option value="manual">Manual</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <button id="refresh-btn" class="btn btn-success">🔄 Refresh Logs</button>
+                    <button id="auto-refresh-btn" class="btn btn-secondary">⏱️ Auto Refresh: OFF</button>
+                    <button id="clear-filters-btn" class="btn btn-secondary">🗑️ Clear Filters</button>
+                </div>
+            </div>
+
+            <div class="logs-section">
+                <div class="section-header">
+                    <span>Brewing Events Log</span>
+                    <span class="log-count" id="log-count">Loading...</span>
+                    <span class="refresh-indicator" id="refresh-indicator">🔄</span>
+                </div>
+                <div class="logs-container">
+                    <div id="loading" class="loading">Loading brewing logs...</div>
+                    <div id="no-logs" class="no-logs" style="display: none;">No brewing logs found</div>
+                    <table id="logs-table" class="logs-table" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Group</th>
+                                <th>Coffee Type</th>
+                                <th>Duration (s)</th>
+                                <th>Volume (ml)</th>
+                                <th>Source</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-tbody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allLogs = [];
+        let autoRefreshInterval = null;
+        let isAutoRefresh = false;
+
+        // Format timestamp for display
+        function formatTimestamp(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleString('it-IT', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        // Load logs from server
+        function loadLogs() {
+            const indicator = document.getElementById('refresh-indicator');
+            indicator.classList.add('active');
+
+            fetch('/api/get_brewing_logs')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        allLogs = data.logs;
+                        displayLogs(allLogs);
+                        updateLogCount(data.count);
+                    } else {
+                        console.error('Failed to load logs:', data.error);
+                        showNoLogs();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading logs:', error);
+                    showNoLogs();
+                })
+                .finally(() => {
+                    indicator.classList.remove('active');
+                    hideLoading();
+                });
+        }
+
+        // Display logs in table
+        function displayLogs(logs) {
+            const tbody = document.getElementById('logs-tbody');
+            const table = document.getElementById('logs-table');
+            const noLogsDiv = document.getElementById('no-logs');
+
+            tbody.innerHTML = '';
+
+            if (logs.length === 0) {
+                table.style.display = 'none';
+                noLogsDiv.style.display = 'block';
+                return;
+            }
+
+            table.style.display = 'table';
+            noLogsDiv.style.display = 'none';
+
+            logs.forEach(log => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td class="timestamp">${formatTimestamp(log.timestamp)}</td>
+                    <td class="group ${log.group}">${log.group.toUpperCase()}</td>
+                    <td><span class="coffee-type k${log.coffee_type}">K${log.coffee_type}</span></td>
+                    <td class="duration">${log.duration}</td>
+                    <td class="volume">${log.volume}</td>
+                    <td><span class="source ${log.source}">${log.source.toUpperCase()}</span></td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        // Filter logs based on current filter settings
+        function filterLogs() {
+            const groupFilter = document.getElementById('group-filter').value;
+            const coffeeFilter = document.getElementById('coffee-filter').value;
+            const sourceFilter = document.getElementById('source-filter').value;
+
+            let filteredLogs = allLogs;
+
+            if (groupFilter) {
+                filteredLogs = filteredLogs.filter(log => log.group === groupFilter);
+            }
+
+            if (coffeeFilter) {
+                filteredLogs = filteredLogs.filter(log => log.coffee_type.toString() === coffeeFilter);
+            }
+
+            if (sourceFilter) {
+                filteredLogs = filteredLogs.filter(log => log.source === sourceFilter);
+            }
+
+            displayLogs(filteredLogs);
+            updateLogCount(filteredLogs.length, allLogs.length);
+        }
+
+        // Update log count display
+        function updateLogCount(filtered, total = null) {
+            const countElement = document.getElementById('log-count');
+            if (total !== null && filtered !== total) {
+                countElement.textContent = `Showing ${filtered} of ${total} entries`;
+            } else {
+                countElement.textContent = `${filtered} entries`;
+            }
+        }
+
+        // Show no logs message
+        function showNoLogs() {
+            document.getElementById('logs-table').style.display = 'none';
+            document.getElementById('no-logs').style.display = 'block';
+            updateLogCount(0);
+        }
+
+        // Hide loading indicator
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        // Clear all filters
+        function clearFilters() {
+            document.getElementById('group-filter').value = '';
+            document.getElementById('coffee-filter').value = '';
+            document.getElementById('source-filter').value = '';
+            filterLogs();
+        }
+
+        // Toggle auto-refresh
+        function toggleAutoRefresh() {
+            const button = document.getElementById('auto-refresh-btn');
+            
+            if (isAutoRefresh) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+                isAutoRefresh = false;
+                button.textContent = '⏱️ Auto Refresh: OFF';
+                button.classList.remove('btn-success');
+                button.classList.add('btn-secondary');
+            } else {
+                autoRefreshInterval = setInterval(loadLogs, 10000); // Refresh every 10 seconds
+                isAutoRefresh = true;
+                button.textContent = '⏱️ Auto Refresh: ON';
+                button.classList.remove('btn-secondary');
+                button.classList.add('btn-success');
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load initial logs
+            loadLogs();
+
+            // Filter event listeners
+            document.getElementById('group-filter').addEventListener('change', filterLogs);
+            document.getElementById('coffee-filter').addEventListener('change', filterLogs);
+            document.getElementById('source-filter').addEventListener('change', filterLogs);
+
+            // Button event listeners
+            document.getElementById('refresh-btn').addEventListener('click', loadLogs);
+            document.getElementById('auto-refresh-btn').addEventListener('click', toggleAutoRefresh);
+            document.getElementById('clear-filters-btn').addEventListener('click', clearFilters);
+        });
+
+        // Clean up intervals when page unloads
+        window.addEventListener('beforeunload', function() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+        });
+    </script>
 </body>
 </html>
 """

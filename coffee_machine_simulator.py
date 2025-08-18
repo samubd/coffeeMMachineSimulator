@@ -156,8 +156,9 @@ class CoffeeMachineSimulator:
             # Simulate brewing coffee
             self._brew_coffee(group)
             
-    def _brew_coffee(self, group: str):
+    def _brew_coffee(self, group: str, coffee_type: Optional[int] = None):
         """Simulate brewing coffee on a specific group."""
+        print(f"Brew coffee from simulator")
         if not self.device.is_connected():
             return
             
@@ -200,29 +201,37 @@ class CoffeeMachineSimulator:
         try:
             # Set group status to brewing
             self.group_status[group] = "brewing"
-            
-            # Generate random coffee data
-            coffee_type = random.choice(self.coffee_types)
+            source = "manual"
+            # Generate coffee data - use provided coffee_type or random selection
+            if coffee_type is None:
+                coffee_type = random.choice(self.coffee_types)
+                source = "simulator"
             erog_time = self._get_erog_time_for_coffee_type(group, coffee_type)
-            flow_total = random.randint(300, 600)
+            flow_total = self._get_flow_total_for_coffee_type(group, coffee_type)
             
             print(f"Brewing coffee on {group}: type={coffee_type}, erogTime={erog_time}, flowTotal={flow_total}")
             
-            brewingtime = erog_time
-            print(f"erogTime={erog_time}, brewingtime: {brewingtime}")
-            flowRate = 20
-            while (brewingtime >= 0):
-                brewingtime = brewingtime - 2
-                flowRate = flowRate + random.randint(-2, 3)
-                print(f"flowRate: {flowRate}")
-                time.sleep(0.2)
+            volume = 0 # volume in ml
+            print(f"flow={volume}, volume: {flow_total}")
+           
+            flowRate = 2 # 2 ml/sec
+            step = 0.2
+            while (volume <= flow_total/10):
+                volume = volume + flowRate*0.2
+                delta = random.randint(-2, 3)
+                flowRate = flowRate + delta/10
+                flowRate = max(min(5, flowRate), .5)
+                print(f"flowRate: {flowRate:.1f} ml/s, brewed volume: {volume:.1f}")
+                time.sleep(step)
             
                 self.device.send(
                     "it.d8pro.device.TelemetryFast01",
                     f"/{group}/flowRate",
-                    flowRate,
+                    int(flowRate),
                     timestamp=datetime.now(ZoneInfo("Europe/Rome"))
                 )
+            
+            print(f"flowRate: {flowRate:.1f} ml/s, brewed volume: {volume:.1f}")
             
             self.device.send(
                     "it.d8pro.device.TelemetryFast01",
@@ -269,6 +278,10 @@ class CoffeeMachineSimulator:
             # Check if we need to update temperature for this group
             self._check_and_update_temperature(group, current_time)
             
+            # Add log entry for this brewing event
+            
+            self._add_brewing_log(group, coffee_type, int(erog_time/10), int(flow_total/10), current_time, source)
+
             # Reset group status to idle after brewing is complete
             self.group_status[group] = "idle"
             
@@ -753,3 +766,97 @@ class CoffeeMachineSimulator:
         except Exception as e:
             print(f"Error getting erog time for {group} K{coffee_type}: {e}")
             return random.randint(150, 350)  # Fallback to default
+
+    def _get_flow_total_for_coffee_type(self, group: str, coffee_type: int) -> int:
+        """
+        Get flow total for a coffee type based on doses or default random.
+        
+        Args:
+            group: Group name (group1, group2, group3)
+            coffee_type: Coffee type (1-7)
+            
+        Returns:
+            int: Flow total in tens of ml (dose_ml * 10)
+        """
+        try:
+            # For coffee types 1-4, try to get dose from doses data
+            if coffee_type in [1, 2, 3, 4]:
+                if (self.simulator_status and 
+                    'doses' in self.simulator_status and 
+                    'data' in self.simulator_status['doses'] and
+                    group in self.simulator_status['doses']['data']):
+                    
+                    doses_data = self.simulator_status['doses']['data'][group]
+                    dose_key = f"k{coffee_type}"
+                    
+                    # Check if dose exists for this coffee type
+                    if dose_key in doses_data:
+                        if isinstance(doses_data[dose_key], dict) and 'value' in doses_data[dose_key]:
+                            dose_ml = doses_data[dose_key]['value']
+                        else:
+                            # Handle case where dose_key contains direct value
+                            dose_ml = doses_data[dose_key]
+                        
+                        # Convert dose from tens of ml to flow_total format (ml)
+                        flow_total = int(dose_ml)
+                        print(f"Using dose for {group} K{coffee_type}: {dose_ml}ml (flow_total: {flow_total})")
+                        return flow_total
+                    else:
+                        print(f"Dose key {dose_key} not found for {group}, using random value")
+                else:
+                    print(f"Doses data not available for {group}, using random value")
+            
+            # Default random flow_total for types 5-7 or when no dose available
+            # Keep the same range as before (300-600 = 30-60ml)
+            flow_total = random.randint(300, 600)
+            print(f"Using random flow_total for {group} K{coffee_type}: {flow_total} (volume: {flow_total/10}ml)")
+            return flow_total
+            
+        except Exception as e:
+            print(f"Error getting flow_total for {group} K{coffee_type}: {e}")
+            # Fallback to random value
+            return random.randint(300, 600)
+
+    def _add_brewing_log(self, group: str, coffee_type: int, duration: int, volume: int, timestamp: datetime, source: str):
+        """
+        Add a brewing event to the log in simulator_status.
+        
+        Args:
+            group: Group name (group1, group2, group3)
+            coffee_type: Coffee type (1-7)
+            duration: Brewing duration in milliseconds (erog_time)
+            volume: Flow volume (flow_total)
+            timestamp: Brewing timestamp
+            source: Source of the brewing event ("simulator" or "manual")
+        """
+        try:
+            if not self.simulator_status:
+                print("No simulator status available for brewing log")
+                return
+            
+            # Initialize brewing_logs if it doesn't exist
+            if 'brewing_logs' not in self.simulator_status:
+                self.simulator_status['brewing_logs'] = []
+            
+            # Create log entry
+            log_entry = {
+                'timestamp': timestamp.isoformat(),
+                'group': group,
+                'coffee_type': coffee_type,
+                'duration': duration,
+                'volume': volume,
+                'source': source
+            }
+            
+            # Add to logs
+            self.simulator_status['brewing_logs'].append(log_entry)
+            
+            # Keep only the last 1000 entries to prevent the file from growing too large
+            max_logs = 1000
+            if len(self.simulator_status['brewing_logs']) > max_logs:
+                self.simulator_status['brewing_logs'] = self.simulator_status['brewing_logs'][-max_logs:]
+            
+            print(f"Added brewing log: {group} K{coffee_type} - {duration}ms, {volume}ml ({source})")
+            
+        except Exception as e:
+            print(f"Error adding brewing log: {e}")
