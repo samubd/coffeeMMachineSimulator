@@ -206,6 +206,19 @@ class AstarteAPIClient:
         if data:
             print('Counters data:', data)
         return data
+
+    def get_current_maintenance(self) -> Optional[Dict[str, Any]]:
+        """
+        Get current counters from the Counters02 interface.
+        
+        Returns:
+            dict: Counter data if successful, None otherwise
+        """
+        print(f"\nCurrent Riseberg deviceID:\t{self.device_id}")
+        data = self._make_authenticated_request('interfaces/it.d8pro.device.TelemetrySlow01/')
+        if data:
+            print('TelemetrySlow data:', data)
+        return data
     
     def get_current_settings(self) -> Optional[Dict[str, Any]]:
         """

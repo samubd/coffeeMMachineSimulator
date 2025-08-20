@@ -46,6 +46,7 @@ from getCurrentSettings import getCurrentSettings
 from getCurrentRecipes import getCurrentRecipes
 from getCurrentDoses import getCurrentDoses
 from getCurrentAlarms import getCurrentAlarms
+from getCurrentMaintenance import getCurrentMaintenance
 
 # Import web server (Flask may not be installed, so handle gracefully)
 try:
@@ -167,7 +168,8 @@ simulator_status = {
                 "k4": {"value": 44, "timestamp": "", "reception_timestamp": ""}   # 44ml
             }
         }
-    }
+    },
+    "maintenance": {"data": {}}
 }
 
 
@@ -583,6 +585,14 @@ def main(cb_loop: Optional[asyncio.AbstractEventLoop] = None):
     else:
         print("No current alarms found - starting with no alarms")
     
+    # Get current maintenance status from the local status file
+    print("Getting current maintenance...")
+    current_maintenance = getCurrentMaintenance()
+    if current_maintenance:
+        simulator_status["maintenance"] = current_maintenance
+        print("Simulator status updated with current maintenance")
+    else:
+        print("No current alarms found - starting with no alarms")
     # Initialize and start the coffee machine simulator
     coffee_simulator = CoffeeMachineSimulator(device, simulator_status)
     coffee_simulator.start_simulation()

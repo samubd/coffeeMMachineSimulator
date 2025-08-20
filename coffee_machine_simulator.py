@@ -515,12 +515,14 @@ class CoffeeMachineSimulator:
             self.total_litres_tens_ml += flow_total
             
             # Get current residualCoffeeActivation value for residualPumpActivation
-            counters_data = self.simulator_status['counters']['data']
+            maintenance_data = self.simulator_status['maintenance']['data']
             residual_coffee_value = 0
             
-            if ('total' in counters_data and 
-                'residualCoffeeActivation' in counters_data['total']):
-                residual_coffee_value = counters_data['total']['residualCoffeeActivation']['value']
+            if ('manteinance' in maintenance_data and 
+                'residualPumpActivation' in maintenance_data['manteinance']):
+                residual_coffee_value = maintenance_data['manteinance']['residualPumpActivation']['value']
+            
+            residual_coffee_value =  residual_coffee_value -1
             
             # Send residualPumpActivation (same as residualCoffeeActivation)
             self.device.send(
