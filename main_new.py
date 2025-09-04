@@ -72,6 +72,7 @@ simulator_status = {
                 "k5": {"reception_timestamp": "", "timestamp": "", "value": 0},
                 "k6": {"reception_timestamp": "", "timestamp": "", "value": 0},
                 "k7": {"reception_timestamp": "", "timestamp": "", "value": 0},
+                "purge": {"reception_timestamp": "", "timestamp": "", "value": 0},
                 "totalCoffee": {"reception_timestamp": "", "timestamp": "", "value": 0}
             },
             "group2": {
@@ -82,6 +83,7 @@ simulator_status = {
                 "k5": {"reception_timestamp": "", "timestamp": "", "value": 0},
                 "k6": {"reception_timestamp": "", "timestamp": "", "value": 0},
                 "k7": {"reception_timestamp": "", "timestamp": "", "value": 0},
+                "purge": {"reception_timestamp": "", "timestamp": "", "value": 0},
                 "totalCoffee": {"reception_timestamp": "", "timestamp": "", "value": 0}
             },
             "group3": {
@@ -92,6 +94,7 @@ simulator_status = {
                 "k5": {"reception_timestamp": "", "timestamp": "", "value": 0},
                 "k6": {"reception_timestamp": "", "timestamp": "", "value": 0},
                 "k7": {"reception_timestamp": "", "timestamp": "", "value": 0},
+                "purge": {"reception_timestamp": "", "timestamp": "", "value": 0},
                 "totalCoffee": {"reception_timestamp": "", "timestamp": "", "value": 0}
             },
             "total": {

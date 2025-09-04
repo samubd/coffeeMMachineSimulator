@@ -330,6 +330,129 @@ def brew_coffee():
         print(f"Error in brew_coffee: {e}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/manual_washing', methods=['POST'])
+def manual_washing():
+    """Trigger manual washing for a specific group."""
+    try:
+        data = request.json
+        
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+        
+        group = data.get('group')
+        
+        if not group or group not in ['group1', 'group2', 'group3']:
+            return jsonify({'error': 'Invalid group. Must be group1, group2, or group3'}), 400
+        
+        if not coffee_device or not coffee_device.is_connected():
+            return jsonify({'error': 'Coffee machine not connected'}), 500
+        
+        if not coffee_simulator:
+            return jsonify({'error': 'Coffee simulator not available'}), 500
+        
+        # Use the coffee machine simulator's _start_manual_washing method
+        try:
+            coffee_simulator._start_manual_washing(group)
+            
+            return jsonify({
+                'success': True,
+                'message': f'Manual washing started successfully on {group}',
+                'operation_info': {
+                    'group': group,
+                    'operation': 'manual_washing'
+                }
+            })
+        
+        except Exception as wash_error:
+            print(f"Error in _start_manual_washing: {wash_error}")
+            return jsonify({'error': f'Manual washing failed: {str(wash_error)}'}), 500
+            
+    except Exception as e:
+        print(f"Error in manual_washing: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/automatic_washing', methods=['POST'])
+def automatic_washing():
+    """Trigger automatic washing for a specific group."""
+    try:
+        data = request.json
+        
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+        
+        group = data.get('group')
+        
+        if not group or group not in ['group1', 'group2', 'group3']:
+            return jsonify({'error': 'Invalid group. Must be group1, group2, or group3'}), 400
+        
+        if not coffee_device or not coffee_device.is_connected():
+            return jsonify({'error': 'Coffee machine not connected'}), 500
+        
+        if not coffee_simulator:
+            return jsonify({'error': 'Coffee simulator not available'}), 500
+        
+        # Use the coffee machine simulator's _start_automatic_washing method
+        try:
+            coffee_simulator._start_automatic_washing(group)
+            
+            return jsonify({
+                'success': True,
+                'message': f'Automatic washing started successfully on {group}',
+                'operation_info': {
+                    'group': group,
+                    'operation': 'automatic_washing'
+                }
+            })
+        
+        except Exception as wash_error:
+            print(f"Error in _start_automatic_washing: {wash_error}")
+            return jsonify({'error': f'Automatic washing failed: {str(wash_error)}'}), 500
+            
+    except Exception as e:
+        print(f"Error in automatic_washing: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/purge', methods=['POST'])
+def purge():
+    """Trigger purge operation for a specific group."""
+    try:
+        data = request.json
+        
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+        
+        group = data.get('group')
+        
+        if not group or group not in ['group1', 'group2', 'group3']:
+            return jsonify({'error': 'Invalid group. Must be group1, group2, or group3'}), 400
+        
+        if not coffee_device or not coffee_device.is_connected():
+            return jsonify({'error': 'Coffee machine not connected'}), 500
+        
+        if not coffee_simulator:
+            return jsonify({'error': 'Coffee simulator not available'}), 500
+        
+        # Use the coffee machine simulator's _start_purge method
+        try:
+            coffee_simulator._start_purge(group)
+            
+            return jsonify({
+                'success': True,
+                'message': f'Purge operation started successfully on {group}',
+                'operation_info': {
+                    'group': group,
+                    'operation': 'purge'
+                }
+            })
+        
+        except Exception as purge_error:
+            print(f"Error in _start_purge: {purge_error}")
+            return jsonify({'error': f'Purge operation failed: {str(purge_error)}'}), 500
+            
+    except Exception as e:
+        print(f"Error in purge: {e}")
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/send_alarm', methods=['POST'])
 def send_alarm():
     """Send alarm data to the coffee machine."""
@@ -1297,6 +1420,63 @@ MACHINE_INTERFACE_TEMPLATE = """
         .button.k6:active { transform: rotate(257deg) translate(100px) rotate(-257deg) scale(0.95); }
         .button.k7:active { transform: rotate(308.4deg) translate(100px) rotate(-308.4deg) scale(0.95); }
         
+        /* Operation buttons below the dial */
+        .operation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .operation-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            min-width: 80px;
+        }
+        
+        .operation-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        .operation-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .operation-btn.manual-wash {
+            background: #28a745;
+        }
+        
+        .operation-btn.manual-wash:hover {
+            background: #218838;
+        }
+        
+        .operation-btn.auto-wash {
+            background: #007bff;
+        }
+        
+        .operation-btn.auto-wash:hover {
+            background: #0056b3;
+        }
+        
+        .operation-btn.purge {
+            background: #fd7e14;
+        }
+        
+        .operation-btn.purge:hover {
+            background: #e76500;
+        }
+        
         @media (max-width: 768px) {
             .interface-container {
                 flex-direction: column;
@@ -1318,6 +1498,12 @@ MACHINE_INTERFACE_TEMPLATE = """
                 width: 40px;
                 height: 40px;
                 font-size: 12px;
+            }
+            
+            .operation-btn {
+                font-size: 10px;
+                padding: 8px 12px;
+                min-width: 70px;
             }
             
             .button.k1 { transform: rotate(0deg) translate(80px) rotate(0deg); }
@@ -1365,6 +1551,11 @@ MACHINE_INTERFACE_TEMPLATE = """
                             <div class="button k6" data-group="1" data-coffee="6">K6</div>
                             <div class="button k7" data-group="1" data-coffee="7">K7</div>
                         </div>
+                        <div class="operation-buttons">
+                            <button class="operation-btn manual-wash" data-operation="manual_washing" data-group="group1">Manual Wash</button>
+                            <button class="operation-btn auto-wash" data-operation="automatic_washing" data-group="group1">Auto Wash</button>
+                            <button class="operation-btn purge" data-operation="purge" data-group="group1">Purge</button>
+                        </div>
                     </div>
                     <div class="group">
                         <h2>Group 2</h2>
@@ -1379,6 +1570,11 @@ MACHINE_INTERFACE_TEMPLATE = """
                             <div class="button k5" data-group="2" data-coffee="5">K5</div>
                             <div class="button k6" data-group="2" data-coffee="6">K6</div>
                             <div class="button k7" data-group="2" data-coffee="7">K7</div>
+                        </div>
+                        <div class="operation-buttons">
+                            <button class="operation-btn manual-wash" data-operation="manual_washing" data-group="group2">Manual Wash</button>
+                            <button class="operation-btn auto-wash" data-operation="automatic_washing" data-group="group2">Auto Wash</button>
+                            <button class="operation-btn purge" data-operation="purge" data-group="group2">Purge</button>
                         </div>
                     </div>
                     <div class="group">
@@ -1395,6 +1591,11 @@ MACHINE_INTERFACE_TEMPLATE = """
                             <div class="button k6" data-group="3" data-coffee="6">K6</div>
                             <div class="button k7" data-group="3" data-coffee="7">K7</div>
                         </div>
+                        <div class="operation-buttons">
+                            <button class="operation-btn manual-wash" data-operation="manual_washing" data-group="group3">Manual Wash</button>
+                            <button class="operation-btn auto-wash" data-operation="automatic_washing" data-group="group3">Auto Wash</button>
+                            <button class="operation-btn purge" data-operation="purge" data-group="group3">Purge</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1408,10 +1609,12 @@ MACHINE_INTERFACE_TEMPLATE = """
 
             groups.forEach((group, groupIndex) => {
                 const display = group.querySelector('.center-display span');
-                const buttons = group.querySelectorAll('.button');
+                const coffeeButtons = group.querySelectorAll('.button');
+                const operationButtons = group.querySelectorAll('.operation-btn');
                 const groupNum = groupIndex + 1;
 
-                buttons.forEach(button => {
+                // Coffee brewing button event listeners
+                coffeeButtons.forEach(button => {
                     button.addEventListener('click', () => {
                         const buttonId = button.textContent;
                         const coffeeType = button.getAttribute('data-coffee');
@@ -1463,6 +1666,67 @@ MACHINE_INTERFACE_TEMPLATE = """
                             setTimeout(() => {
                                 display.textContent = 'Ready';
                             }, 3000);
+                        });
+                    });
+                });
+
+                // Operation button event listeners (manual wash, auto wash, purge)
+                operationButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const operation = button.getAttribute('data-operation');
+                        const group = button.getAttribute('data-group');
+                        const operationName = button.textContent;
+
+                        // Clear any existing timer for this group
+                        if (timers[groupNum]) {
+                            clearInterval(timers[groupNum]);
+                        }
+
+                        // Show operation in progress
+                        display.textContent = `${operationName}...`;
+                        
+                        // Disable the button during operation
+                        button.disabled = true;
+                        const originalText = button.textContent;
+                        button.textContent = 'Running...';
+
+                        // Send the operation request to the server
+                        fetch(`/api/${operation}`, {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({
+                                group: group
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                console.log(`${operationName} completed successfully on ${group}`);
+                                display.textContent = `${operationName}: Done`;
+                                
+                                // Clear display after 3 seconds
+                                setTimeout(() => {
+                                    display.textContent = 'Ready';
+                                }, 3000);
+                            } else {
+                                console.error(`Failed to perform ${operationName}: ${data.error}`);
+                                display.textContent = `${operationName}: Error`;
+                                setTimeout(() => {
+                                    display.textContent = 'Ready';
+                                }, 3000);
+                            }
+                        })
+                        .catch(error => {
+                            console.error(`Error performing ${operationName}:`, error);
+                            display.textContent = `${operationName}: Error`;
+                            setTimeout(() => {
+                                display.textContent = 'Ready';
+                            }, 3000);
+                        })
+                        .finally(() => {
+                            // Re-enable the button
+                            button.disabled = false;
+                            button.textContent = originalText;
                         });
                     });
                 });

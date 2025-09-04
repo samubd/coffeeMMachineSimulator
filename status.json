@@ -3,140 +3,145 @@
         "data": {
             "group1": {
                 "k1": {
-                    "reception_timestamp": "2025-08-14T17:23:49.080Z",
-                    "timestamp": "2025-08-14T17:23:50.250Z",
-                    "value": 149
+                    "reception_timestamp": "2025-09-04T20:14:40.255Z",
+                    "timestamp": "2025-09-04T20:14:42.072Z",
+                    "value": 469
                 },
                 "k2": {
-                    "reception_timestamp": "2025-08-14T14:49:11.073Z",
-                    "timestamp": "2025-08-14T14:49:12.053Z",
-                    "value": 108
+                    "reception_timestamp": "2025-09-04T20:01:27.659Z",
+                    "timestamp": "2025-09-04T20:01:29.469Z",
+                    "value": 434
                 },
                 "k3": {
-                    "reception_timestamp": "2025-08-14T15:52:17.277Z",
-                    "timestamp": "2025-08-14T15:52:18.314Z",
-                    "value": 199
+                    "reception_timestamp": "2025-09-04T20:25:32.106Z",
+                    "timestamp": "2025-09-04T20:25:33.959Z",
+                    "value": 849
                 },
                 "k4": {
-                    "reception_timestamp": "2025-08-14T16:39:30.378Z",
-                    "timestamp": "2025-08-14T16:39:31.494Z",
-                    "value": 198
+                    "reception_timestamp": "2025-09-04T15:39:00.024Z",
+                    "timestamp": "2025-09-04T15:38:59.723Z",
+                    "value": 806
                 },
                 "k5": {
-                    "reception_timestamp": "2025-08-14T18:05:01.540Z",
-                    "timestamp": "2025-08-14T18:05:02.764Z",
-                    "value": 89
+                    "reception_timestamp": "2025-09-04T15:18:33.907Z",
+                    "timestamp": "2025-09-04T15:18:33.607Z",
+                    "value": 373
                 },
                 "k6": {
-                    "reception_timestamp": "2025-08-14T16:03:46.721Z",
-                    "timestamp": "2025-08-14T16:03:47.766Z",
-                    "value": 82
+                    "reception_timestamp": "2025-09-04T14:31:42.537Z",
+                    "timestamp": "2025-09-04T14:31:42.256Z",
+                    "value": 373
                 },
                 "k7": {
-                    "reception_timestamp": "2025-08-14T15:38:42.781Z",
-                    "timestamp": "2025-08-14T15:38:43.827Z",
-                    "value": 104
+                    "reception_timestamp": "2025-09-04T19:05:34.618Z",
+                    "timestamp": "2025-09-04T19:05:34.312Z",
+                    "value": 407
+                },
+                "purge": {
+                    "reception_timestamp": "2025-09-04T20:24:56.955Z",
+                    "timestamp": "2025-09-04T20:24:59.062Z",
+                    "value": 2700
                 },
                 "totalCoffee": {
-                    "reception_timestamp": "2025-08-14T18:05:01.540Z",
-                    "timestamp": "2025-08-14T18:05:02.764Z",
-                    "value": 898
+                    "reception_timestamp": "2025-09-04T20:25:32.106Z",
+                    "timestamp": "2025-09-04T20:25:33.959Z",
+                    "value": 3682
                 }
             },
             "group2": {
                 "k1": {
-                    "reception_timestamp": "2025-08-14T14:04:35.987Z",
-                    "timestamp": "2025-08-14T14:04:36.921Z",
-                    "value": 71
+                    "reception_timestamp": "2025-09-04T17:10:11.090Z",
+                    "timestamp": "2025-09-04T17:10:10.772Z",
+                    "value": 338
                 },
                 "k2": {
-                    "reception_timestamp": "2025-08-14T15:53:00.866Z",
-                    "timestamp": "2025-08-14T15:53:01.926Z",
-                    "value": 70
+                    "reception_timestamp": "2025-09-04T14:00:37.117Z",
+                    "timestamp": "2025-09-04T14:00:36.795Z",
+                    "value": 363
                 },
                 "k3": {
-                    "reception_timestamp": "2025-08-14T15:08:49.904Z",
-                    "timestamp": "2025-08-14T15:08:50.898Z",
-                    "value": 126
+                    "reception_timestamp": "2025-09-04T14:48:11.924Z",
+                    "timestamp": "2025-09-04T14:48:11.633Z",
+                    "value": 738
                 },
                 "k4": {
-                    "reception_timestamp": "2025-08-14T17:41:48.818Z",
-                    "timestamp": "2025-08-14T17:41:50.001Z",
-                    "value": 106
+                    "reception_timestamp": "2025-09-04T19:06:17.807Z",
+                    "timestamp": "2025-09-04T19:06:17.491Z",
+                    "value": 718
                 },
                 "k5": {
-                    "reception_timestamp": "2025-08-14T16:05:23.727Z",
-                    "timestamp": "2025-08-14T16:05:24.798Z",
-                    "value": 61
+                    "reception_timestamp": "2025-09-04T15:13:13.477Z",
+                    "timestamp": "2025-09-04T15:13:13.184Z",
+                    "value": 391
                 },
                 "k6": {
-                    "reception_timestamp": "2025-08-14T13:27:02.906Z",
-                    "timestamp": "2025-08-14T13:27:03.754Z",
-                    "value": 67
+                    "reception_timestamp": "2025-09-04T16:36:07.702Z",
+                    "timestamp": "2025-09-04T16:36:07.390Z",
+                    "value": 352
                 },
                 "k7": {
-                    "reception_timestamp": "2025-08-14T16:57:45.657Z",
-                    "timestamp": "2025-08-14T16:57:46.784Z",
-                    "value": 68
+                    "reception_timestamp": "2025-09-04T18:22:26.878Z",
+                    "timestamp": "2025-09-04T18:22:26.587Z",
+                    "value": 383
                 },
                 "totalCoffee": {
-                    "reception_timestamp": "2025-08-14T17:41:48.818Z",
-                    "timestamp": "2025-08-14T17:41:50.001Z",
-                    "value": 815
+                    "reception_timestamp": "2025-09-04T19:06:17.807Z",
+                    "timestamp": "2025-09-04T19:06:17.491Z",
+                    "value": 3529
                 }
             },
             "group3": {
                 "k1": {
-                    "reception_timestamp": "2025-08-14T21:18:25.453Z",
-                    "timestamp": "2025-08-14T21:18:23.201Z",
-                    "value": 70
+                    "reception_timestamp": "2025-09-04T19:08:51.150Z",
+                    "timestamp": "2025-09-04T19:08:50.838Z",
+                    "value": 365
                 },
                 "k2": {
-                    "reception_timestamp": "2025-08-14T18:02:45.406Z",
-                    "timestamp": "2025-08-14T18:02:46.604Z",
-                    "value": 62
+                    "reception_timestamp": "2025-09-04T18:32:56.732Z",
+                    "timestamp": "2025-09-04T18:32:56.432Z",
+                    "value": 376
                 },
                 "k3": {
-                    "reception_timestamp": "2025-08-14T15:05:10.983Z",
-                    "timestamp": "2025-08-14T15:05:11.992Z",
-                    "value": 122
+                    "reception_timestamp": "2025-09-04T17:42:50.982Z",
+                    "timestamp": "2025-09-04T17:42:50.690Z",
+                    "value": 672
                 },
                 "k4": {
-                    "reception_timestamp": "2025-08-14T13:38:10.797Z",
-                    "timestamp": "2025-08-14T13:38:11.686Z",
-                    "value": 102
+                    "reception_timestamp": "2025-09-04T15:49:07.233Z",
+                    "timestamp": "2025-09-04T15:49:06.924Z",
+                    "value": 672
                 },
                 "k5": {
-                    "reception_timestamp": "2025-08-14T16:44:38.256Z",
-                    "timestamp": "2025-08-14T16:44:39.382Z",
-                    "value": 72
+                    "reception_timestamp": "2025-09-04T16:54:19.735Z",
+                    "timestamp": "2025-09-04T16:54:19.445Z",
+                    "value": 369
                 },
                 "k6": {
-                    "reception_timestamp": "2025-08-14T14:15:51.156Z",
-                    "timestamp": "2025-08-14T14:15:52.093Z",
-                    "value": 56
+                    "reception_timestamp": "2025-09-04T15:35:11.763Z",
+                    "timestamp": "2025-09-04T15:35:11.466Z",
+                    "value": 380
                 },
                 "k7": {
-                    "reception_timestamp": "2025-08-14T15:49:20.336Z",
-                    "timestamp": "2025-08-14T15:49:21.388Z",
-                    "value": 76
+                    "reception_timestamp": "2025-09-04T15:00:24.648Z",
+                    "timestamp": "2025-09-04T15:00:24.351Z",
+                    "value": 379
                 },
                 "totalCoffee": {
-                    "reception_timestamp": "2025-08-14T21:18:25.453Z",
-                    "timestamp": "2025-08-14T21:18:23.201Z",
-                    "value": 787
+                    "reception_timestamp": "2025-09-04T19:08:51.150Z",
+                    "timestamp": "2025-09-04T19:08:50.838Z",
+                    "value": 3440
                 }
             },
             "residualCoffeeActivation": {
-                "reception_timestamp": "2025-08-14T21:18:25.453Z",
-                "timestamp": "2025-08-14T21:18:23.201Z",
-                "value": 9999
+                "reception_timestamp": "2025-09-04T20:25:32.106Z",
+                "timestamp": "2025-09-04T20:25:33.959Z",
+                "value": 9998
             },
             "total": {
                 "totalCoffee": {
-                    "reception_timestamp": "2025-08-14T21:18:25.453Z",
-                    "timestamp": "2025-08-14T21:18:23.201Z",
-                    "value": 2500
+                    "reception_timestamp": "2025-09-04T20:25:32.106Z",
+                    "timestamp": "2025-09-04T20:25:33.959Z",
+                    "value": 10651
                 }
             }
         }
@@ -224,70 +229,163 @@
     },
     "recipes": {
         "group1": {
+            "name": "kalpa d8pro",
+            "id": 2,
+            "ownerId": "5de3c135-2448-40dd-88d3-02422de61c6b",
+            "ownerFirstName": "Samuele",
+            "ownerLastName": "Vecchi",
+            "ownerUserName": "samuele.vecchi",
+            "tags": [
+                "d8prokalpa"
+            ],
+            "parameters": [
+                {
+                    "endpoints": {
+                        "/temperature/_TMPRT_GR_": 930,
+                        "/preinfusion/preinfusionSingleEnabled": false,
+                        "/preinfusion/preinfusionDoubleEnabled": false,
+                        "/preinfusion/singleEnabledGr2": false,
+                        "/preinfusion/doubleEnabledGr2": false,
+                        "/preinfusion/singleEnabledGr3": false,
+                        "/preinfusion/doubleEnabledGr3": false,
+                        "/preinfusion/singleOnDurationGr1": 10,
+                        "/preinfusion/singleOffDurationGr1": 20
+                    },
+                    "interface": "it.d8pro.server.Settings03"
+                },
+                {
+                    "endpoints": {
+                        "/_GROUP_/k1": 260,
+                        "/_GROUP_/k2": 350,
+                        "/_GROUP_/k3": 300,
+                        "/_GROUP_/k4": 370
+                    },
+                    "interface": "it.d8pro.server.Doses02"
+                }
+            ],
             "targetTime": {
-                "1": 230,
+                "1": 190,
                 "2": 230,
                 "3": 270,
-                "4": 300
+                "4": 280
             },
-            "dose": {
-                "1": 26,
-                "2": 37,
-                "3": 32,
-                "4": 44
-            }
+            "machineModel": "D8PRO",
+            "visibility": "PUBLIC",
+            "dateInsert": "2025-08-20T14:41:03"
         },
         "group2": {
+            "name": "kalpa d8pro",
+            "id": 2,
+            "ownerId": "5de3c135-2448-40dd-88d3-02422de61c6b",
+            "ownerFirstName": "Samuele",
+            "ownerLastName": "Vecchi",
+            "ownerUserName": "samuele.vecchi",
+            "tags": [
+                "d8prokalpa"
+            ],
+            "parameters": [
+                {
+                    "endpoints": {
+                        "/temperature/_TMPRT_GR_": 930,
+                        "/preinfusion/preinfusionSingleEnabled": false,
+                        "/preinfusion/preinfusionDoubleEnabled": false,
+                        "/preinfusion/singleEnabledGr2": false,
+                        "/preinfusion/doubleEnabledGr2": false,
+                        "/preinfusion/singleEnabledGr3": false,
+                        "/preinfusion/doubleEnabledGr3": false,
+                        "/preinfusion/singleOnDurationGr1": 10,
+                        "/preinfusion/singleOffDurationGr1": 20
+                    },
+                    "interface": "it.d8pro.server.Settings03"
+                },
+                {
+                    "endpoints": {
+                        "/_GROUP_/k1": 260,
+                        "/_GROUP_/k2": 350,
+                        "/_GROUP_/k3": 300,
+                        "/_GROUP_/k4": 370
+                    },
+                    "interface": "it.d8pro.server.Doses02"
+                }
+            ],
             "targetTime": {
-                "1": 230,
+                "1": 190,
                 "2": 230,
                 "3": 270,
-                "4": 300
+                "4": 280
             },
-            "dose": {
-                "1": 26,
-                "2": 37,
-                "3": 32,
-                "4": 44
-            }
+            "machineModel": "D8PRO",
+            "visibility": "PUBLIC",
+            "dateInsert": "2025-08-20T14:41:03"
         },
         "group3": {
+            "name": "kalpa d8pro",
+            "id": 2,
+            "ownerId": "5de3c135-2448-40dd-88d3-02422de61c6b",
+            "ownerFirstName": "Samuele",
+            "ownerLastName": "Vecchi",
+            "ownerUserName": "samuele.vecchi",
+            "tags": [
+                "d8prokalpa"
+            ],
+            "parameters": [
+                {
+                    "endpoints": {
+                        "/temperature/_TMPRT_GR_": 930,
+                        "/preinfusion/preinfusionSingleEnabled": false,
+                        "/preinfusion/preinfusionDoubleEnabled": false,
+                        "/preinfusion/singleEnabledGr2": false,
+                        "/preinfusion/doubleEnabledGr2": false,
+                        "/preinfusion/singleEnabledGr3": false,
+                        "/preinfusion/doubleEnabledGr3": false,
+                        "/preinfusion/singleOnDurationGr1": 10,
+                        "/preinfusion/singleOffDurationGr1": 20
+                    },
+                    "interface": "it.d8pro.server.Settings03"
+                },
+                {
+                    "endpoints": {
+                        "/_GROUP_/k1": 260,
+                        "/_GROUP_/k2": 350,
+                        "/_GROUP_/k3": 300,
+                        "/_GROUP_/k4": 370
+                    },
+                    "interface": "it.d8pro.server.Doses02"
+                }
+            ],
             "targetTime": {
-                "1": 230,
+                "1": 190,
                 "2": 230,
                 "3": 270,
-                "4": 300
+                "4": 280
             },
-            "dose": {
-                "1": 26,
-                "2": 37,
-                "3": 32,
-                "4": 44
-            }
+            "machineModel": "D8PRO",
+            "visibility": "PUBLIC",
+            "dateInsert": "2025-08-20T14:41:03"
         }
     },
     "doses": {
         "data": {
             "group1": {
                 "k1": {
-                    "reception_timestamp": "2025-08-08T16:01:06.942Z",
-                    "timestamp": "2025-08-08T16:01:06.116Z",
-                    "value": 260
+                    "reception_timestamp": "2025-08-25T07:39:08.078Z",
+                    "timestamp": "2025-08-25T07:39:07.956Z",
+                    "value": 270
                 },
                 "k2": {
-                    "reception_timestamp": "2025-08-08T16:01:07.046Z",
-                    "timestamp": "2025-08-08T16:01:06.116Z",
-                    "value": 370
+                    "reception_timestamp": "2025-08-20T12:41:47.323Z",
+                    "timestamp": "2025-08-20T12:41:47.247Z",
+                    "value": 350
                 },
                 "k3": {
-                    "reception_timestamp": "2025-08-08T16:01:07.046Z",
-                    "timestamp": "2025-08-08T16:01:06.116Z",
-                    "value": 320
+                    "reception_timestamp": "2025-08-20T12:41:47.382Z",
+                    "timestamp": "2025-08-20T12:41:47.285Z",
+                    "value": 300
                 },
                 "k4": {
-                    "reception_timestamp": "2025-08-08T16:01:07.115Z",
-                    "timestamp": "2025-08-08T16:01:06.116Z",
-                    "value": 440
+                    "reception_timestamp": "2025-08-20T12:41:47.426Z",
+                    "timestamp": "2025-08-20T12:41:47.343Z",
+                    "value": 370
                 },
                 "k5": {
                     "reception_timestamp": "2025-08-08T16:01:07.174Z",
@@ -307,24 +405,24 @@
             },
             "group2": {
                 "k1": {
-                    "reception_timestamp": "2025-08-08T16:01:07.297Z",
-                    "timestamp": "2025-08-08T16:01:06.116Z",
-                    "value": 180
+                    "reception_timestamp": "2025-08-20T12:41:47.382Z",
+                    "timestamp": "2025-08-20T12:41:47.286Z",
+                    "value": 260
                 },
                 "k2": {
-                    "reception_timestamp": "2025-08-08T16:01:07.357Z",
-                    "timestamp": "2025-08-08T16:01:06.116Z",
-                    "value": 380
+                    "reception_timestamp": "2025-08-20T12:41:47.426Z",
+                    "timestamp": "2025-08-20T12:41:47.344Z",
+                    "value": 350
                 },
                 "k3": {
-                    "reception_timestamp": "2025-08-08T16:01:07.415Z",
-                    "timestamp": "2025-08-08T16:01:06.116Z",
-                    "value": 290
+                    "reception_timestamp": "2025-08-20T12:41:47.426Z",
+                    "timestamp": "2025-08-20T12:41:47.346Z",
+                    "value": 300
                 },
                 "k4": {
-                    "reception_timestamp": "2025-08-08T16:01:07.482Z",
-                    "timestamp": "2025-08-08T16:01:06.116Z",
-                    "value": 410
+                    "reception_timestamp": "2025-08-20T12:41:47.470Z",
+                    "timestamp": "2025-08-20T12:41:47.397Z",
+                    "value": 370
                 },
                 "k5": {
                     "reception_timestamp": "2025-08-08T16:01:07.546Z",
@@ -344,24 +442,24 @@
             },
             "group3": {
                 "k1": {
-                    "reception_timestamp": "2025-08-08T16:01:07.674Z",
-                    "timestamp": "2025-08-08T16:01:06.116Z",
-                    "value": 190
+                    "reception_timestamp": "2025-08-20T12:41:47.323Z",
+                    "timestamp": "2025-08-20T12:41:47.247Z",
+                    "value": 260
                 },
                 "k2": {
-                    "reception_timestamp": "2025-08-08T16:01:07.745Z",
-                    "timestamp": "2025-08-08T16:01:06.116Z",
-                    "value": 390
+                    "reception_timestamp": "2025-08-20T12:41:47.382Z",
+                    "timestamp": "2025-08-20T12:41:47.285Z",
+                    "value": 350
                 },
                 "k3": {
-                    "reception_timestamp": "2025-08-08T16:01:07.811Z",
-                    "timestamp": "2025-08-08T16:01:06.116Z",
-                    "value": 310
+                    "reception_timestamp": "2025-08-20T12:41:47.426Z",
+                    "timestamp": "2025-08-20T12:41:47.341Z",
+                    "value": 300
                 },
                 "k4": {
-                    "reception_timestamp": "2025-08-08T16:01:07.878Z",
-                    "timestamp": "2025-08-08T16:01:06.116Z",
-                    "value": 420
+                    "reception_timestamp": "2025-08-20T12:41:47.426Z",
+                    "timestamp": "2025-08-20T12:41:47.345Z",
+                    "value": 370
                 },
                 "k5": {
                     "reception_timestamp": "2025-08-08T16:01:07.878Z",
@@ -393,8 +491,80 @@
             }
         }
     },
+    "maintenance": {
+        "data": {
+            "gr1Status": {
+                "reception_timestamp": "2025-09-04T20:56:22.073Z",
+                "timestamp": "2025-09-04T20:56:24.083Z",
+                "value": 1
+            },
+            "gr1TempSetpoint": {
+                "reception_timestamp": "2025-03-06T09:26:39.119Z",
+                "timestamp": "2025-03-06T09:26:39.473Z",
+                "value": 940
+            },
+            "gr2Status": {
+                "reception_timestamp": "2025-09-04T20:56:22.212Z",
+                "timestamp": "2025-09-04T20:56:24.083Z",
+                "value": 1
+            },
+            "gr2TempSetpoint": {
+                "reception_timestamp": "2025-03-06T09:26:40.109Z",
+                "timestamp": "2025-03-06T09:26:40.498Z",
+                "value": 950
+            },
+            "gr3Status": {
+                "reception_timestamp": "2025-09-04T20:56:22.272Z",
+                "timestamp": "2025-09-04T20:56:24.083Z",
+                "value": 1
+            },
+            "gr3TempSetpoint": {
+                "reception_timestamp": "2025-03-06T09:26:41.091Z",
+                "timestamp": "2025-03-06T09:26:41.509Z",
+                "value": 930
+            },
+            "manteinance": {
+                "residualFilterLiters": {
+                    "reception_timestamp": "2025-09-04T20:25:32.106Z",
+                    "timestamp": "2025-09-04T20:25:33.959Z",
+                    "value": 4993
+                },
+                "residualPumpActivation": {
+                    "reception_timestamp": "2025-09-04T20:25:32.106Z",
+                    "timestamp": "2025-09-04T20:25:33.959Z",
+                    "value": 9958
+                }
+            }
+        }
+    },
     "alarms": {
         "/warning/group2FlowError": false,
-        "/major/group3NtcOpen": false
+        "/major/group3NtcOpen": false,
+        "/major/group1NtcShort": false,
+        "/critical/generalLoadingTimeout": false,
+        "/major/group3HmiCommError": false,
+        "/major/group1NtcOpen": false,
+        "/critical/boilerNtcOpen": false,
+        "/major/cupNtcOpen": false,
+        "/major/group3NtcShort": false,
+        "/major/group2HmiCommError": false,
+        "/major/group3HeatingTimeout": false,
+        "/major/group2NtcShort": false,
+        "/warning/group3FlowError": false,
+        "/major/group1HmiCommError": false,
+        "/major/group2NtcOpen": false,
+        "/critical/boilerNtcShort": false,
+        "/major/group2HeatingTimeout": false,
+        "/major/group1HeatingTimeout": false,
+        "/major/cupNtcShort": false,
+        "/major/cupHeatingTimeout": false,
+        "/critical/boilerHeatingTimeout": false,
+        "/warning/group1FlowError": false,
+        "/major/group1EvLoadingError": false,
+        "/major/waterEvLoadingError": false,
+        "/major/group3EvLoadingError": false,
+        "/major/mixEvLoadingError": false,
+        "/major/group2EvLoadingError": false,
+        "/critical/generalEvLoadingError": false
     }
 }

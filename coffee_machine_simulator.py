@@ -27,9 +27,14 @@ class CoffeeMachineSimulator:
         self.coffee_types = [1, 2, 3, 4, 5, 6, 7]  # 7 different coffee types
         self.running = False
         self.threads = []
-        self.group_status = {group: "idle" for group in self.groups} # Track status of each group: idle, brewing
+        self.group_status = {group: "idle" for group in self.groups} # Track status of each group: idle, brewing, washing
         # Load active alarms from simulator_status if available
         self.active_alarms: Dict[str, bool] = self.simulator_status.get('alarms', {}) # Store active alarms, e.g., {"/critical/general": True, "/major/group3HeatingTimeout": True}
+        
+        # Manual washing tracking
+        self.last_washing_date = None
+        self.washing_in_progress = False
+        self.daily_washing_completed = False
 
         # Define alarm types for easier management
         self.critical_alarms = {
@@ -135,6 +140,17 @@ class CoffeeMachineSimulator:
                 time.sleep(60)  # Check every minute during closed hours
                 continue
             
+            # Check if this is the first group and shop is just opening (7:00-7:30 AM)
+            # Perform daily manual washing before starting coffee operations
+            if group == "group1" and current_hour == 7 and not self.daily_washing_completed:
+                self._check_and_perform_daily_washing(current_time)
+            
+            # Wait if washing is in progress
+            if self.washing_in_progress:
+                print(f"{group} waiting - manual washing in progress")
+                time.sleep(30)  # Check every 30 seconds during washing
+                continue
+            
             # Calculate wait time based on hour of day for realistic coffee shop patterns
             wait_time = self._get_realistic_wait_time(current_hour)
             
@@ -206,6 +222,30 @@ class CoffeeMachineSimulator:
             if coffee_type is None:
                 coffee_type = random.choice(self.coffee_types)
                 source = "simulator"
+                
+                
+            # a purge every 3  coffees
+            purgeChance = random.randint(0, 100)
+            print(purgeChance)
+            if purgeChance > 60:
+                print(f"purge {self.interface_name} /{group}/coffeeType")
+                current_time = datetime.now(ZoneInfo("Europe/Rome"))
+                
+                self.device.send(
+                    self.interface_name,
+                    f"/{group}/coffeeType",
+                    8,
+                    timestamp=current_time
+                )
+                
+                time.sleep(4)
+                current_time = datetime.now(ZoneInfo("Europe/Rome"))
+                self._update_and_send_counters(group, 8, 350, current_time)
+                self._add_brewing_log(group, 8, int(40/10), int(350/10), current_time, source)
+            else:
+                print("no purge")
+            
+            
             erog_time = self._get_erog_time_for_coffee_type(group, coffee_type)
             flow_total = self._get_flow_total_for_coffee_type(group, coffee_type)
             
@@ -332,11 +372,16 @@ class CoffeeMachineSimulator:
                 coffee_increment = 1
             elif coffee_type in [3, 4]:
                 coffee_increment = 2
+            elif coffee_type == 8:  # Purge
+                coffee_increment = 1
             else:
                 coffee_increment = 1  # Default for types 5, 6, 7
             
             # Update group-specific coffee type counter (k1-k7)
-            coffee_key = f"k{coffee_type}"
+            if coffee_type < 8:
+                coffee_key = f"k{coffee_type}"
+            elif coffee_type == 8:
+                coffee_key = f"purge"
             
             # Ensure the group exists in counters_data
             if group not in counters_data:
@@ -365,43 +410,46 @@ class CoffeeMachineSimulator:
             )
             print(f"Updated {group}/{coffee_key}: {counters_data[group][coffee_key]['value']}")
             
-            # Update group total coffee counter
-            # Initialize totalCoffee if it doesn't exist
-            if 'totalCoffee' not in counters_data[group]:
-                counters_data[group]['totalCoffee'] = {
-                    'value': 0,
-                    'timestamp': current_time.isoformat(),
-                    'reception_timestamp': current_time.isoformat()
-                }
-                print(f"Initialized missing counter {group}/totalCoffee")
-            
-            counters_data[group]['totalCoffee']['value'] += coffee_increment
-            counters_data[group]['totalCoffee']['timestamp'] = current_time.isoformat()
-            counters_data[group]['totalCoffee']['reception_timestamp'] = current_time.isoformat()
-            
-            # Send updated group total to Astarte
-            self.device.send(
-                "it.d8pro.device.Counters02",
-                f"/{group}/totalCoffee",
-                counters_data[group]['totalCoffee']['value'],
-                timestamp=current_time
-            )
-            print(f"Updated {group}/totalCoffee: {counters_data[group]['totalCoffee']['value']}")
-            
-            # Update total coffee counter
-            if 'totalCoffee' in counters_data['total']:
-                counters_data['total']['totalCoffee']['value'] += coffee_increment
-                counters_data['total']['totalCoffee']['timestamp'] = current_time.isoformat()
-                counters_data['total']['totalCoffee']['reception_timestamp'] = current_time.isoformat()
+            # Update group total coffee counter (exclude purges as they are cleaning operations)
+            if coffee_type != 8:  # Don't count purges in total coffee
+                # Initialize totalCoffee if it doesn't exist
+                if 'totalCoffee' not in counters_data[group]:
+                    counters_data[group]['totalCoffee'] = {
+                        'value': 0,
+                        'timestamp': current_time.isoformat(),
+                        'reception_timestamp': current_time.isoformat()
+                    }
+                    print(f"Initialized missing counter {group}/totalCoffee")
                 
-                # Send updated total coffee to Astarte
+                counters_data[group]['totalCoffee']['value'] += coffee_increment
+                counters_data[group]['totalCoffee']['timestamp'] = current_time.isoformat()
+                counters_data[group]['totalCoffee']['reception_timestamp'] = current_time.isoformat()
+                
+                # Send updated group total to Astarte
                 self.device.send(
                     "it.d8pro.device.Counters02",
-                    "/total/totalCoffee",
-                    counters_data['total']['totalCoffee']['value'],
+                    f"/{group}/totalCoffee",
+                    counters_data[group]['totalCoffee']['value'],
                     timestamp=current_time
                 )
-                print(f"Updated total/totalCoffee: {counters_data['total']['totalCoffee']['value']}")
+                print(f"Updated {group}/totalCoffee: {counters_data[group]['totalCoffee']['value']}")
+                
+                # Update total coffee counter
+                if 'totalCoffee' in counters_data['total']:
+                    counters_data['total']['totalCoffee']['value'] += coffee_increment
+                    counters_data['total']['totalCoffee']['timestamp'] = current_time.isoformat()
+                    counters_data['total']['totalCoffee']['reception_timestamp'] = current_time.isoformat()
+                    
+                    # Send updated total coffee to Astarte
+                    self.device.send(
+                        "it.d8pro.device.Counters02",
+                        "/total/totalCoffee",
+                        counters_data['total']['totalCoffee']['value'],
+                        timestamp=current_time
+                    )
+                    print(f"Updated total/totalCoffee: {counters_data['total']['totalCoffee']['value']}")
+            else:
+                print(f"Purge operation - not counting in totalCoffee counters")
             
             # Update total volume (flow_total/10)
             volume_increment = flow_total / 10
@@ -419,8 +467,9 @@ class CoffeeMachineSimulator:
                 )
                 print(f"Updated total/totalVolume: {counters_data['total']['totalVolume']['value']}")
             
-            # Update residualCoffeeActivation (decrease by 1 for each coffee)
-            self._update_residual_coffee_activation(current_time)
+            # Update residualCoffeeActivation (decrease by 1 for each coffee, but not for purges)
+            if coffee_type != 8:  # Don't affect maintenance counter for purges
+                self._update_residual_coffee_activation(current_time)
             
             # Update maintenance counters
             self._update_maintenance_counters(flow_total, current_time)
@@ -669,7 +718,7 @@ class CoffeeMachineSimulator:
             setpoint = self._get_temperature_setpoint(group)
             
             # Generate realistic temperature variation around setpoint (±2-5°C)
-            variation = random.uniform(-5.0, 5.0)
+            variation = random.uniform(-2.0, 2.0)
             current_temp = setpoint + variation
             
             # Round to 1 decimal place
@@ -726,10 +775,14 @@ class CoffeeMachineSimulator:
                 "group3": 92.5
             }
             
+            if (self.simulator_status and 
+                    'maintenance' in self.simulator_status ):
+                default_setpoints['group1'] = self.simulator_status['maintenance']['data']['gr1TempSetpoint']['value']/10
+                default_setpoints['group2'] = self.simulator_status['maintenance']['data']['gr2TempSetpoint']['value']/10
+                default_setpoints['group3'] = self.simulator_status['maintenance']['data']['gr3TempSetpoint']['value']/10
+            
             setpoint = default_setpoints.get(group, 90.0)
             
-            # TODO: In the future, this could read from actual TelemetrySlow01 data
-            # if available in simulator_status
             
             return setpoint
             
@@ -754,7 +807,7 @@ class CoffeeMachineSimulator:
                         
                         target_time = recipe_data['targetTime'][str(coffee_type)]
                         
-                        # Generate random time around target (±35%)
+                        # Generate random time around target (±15%)
                         variation = int(target_time * 0.15)
                         min_time = target_time - variation
                         max_time = target_time + variation
@@ -763,7 +816,8 @@ class CoffeeMachineSimulator:
                         min_time = max(min_time, 50)
                         
                         erog_time = random.randint(min_time, max_time)
-                        print(f"Using recipe target time for {group} K{coffee_type}: {target_time}ms (generated: {erog_time}ms)")
+                        delta = 100*abs(erog_time-target_time)/target_time
+                        print(f"Using recipe target time for {group} K{coffee_type}: {target_time}ms (generated: {erog_time}ms delta= {delta:.1f}%) ")
                         return erog_time
             
             # Default random time for types 5-7 or when no recipe available
@@ -868,3 +922,164 @@ class CoffeeMachineSimulator:
             
         except Exception as e:
             print(f"Error adding brewing log: {e}")
+
+    def _check_and_perform_daily_washing(self, current_time: datetime):
+        """
+        Check if daily washing needs to be performed and execute it.
+        
+        Args:
+            current_time: Current datetime
+        """
+        try:
+            current_date = current_time.date()
+            
+            # Check if washing has already been performed today
+            if (self.last_washing_date is not None and 
+                self.last_washing_date == current_date):
+                self.daily_washing_completed = True
+                return
+            
+            # Check if it's the right time for washing (7:00-7:30 AM)
+            if current_time.hour == 7 and current_time.minute <= 30:
+                print(f"🧼 Starting daily manual washing at {current_time.strftime('%H:%M:%S')}")
+                self._manual_washing(current_time)
+                
+                # Update washing status
+                self.last_washing_date = current_date
+                self.daily_washing_completed = True
+                
+                self.device.send(
+                    self.interface_name,
+                    f"/group1/coffeeType",
+                    9,
+                    timestamp=current_time
+                )
+                
+                self.device.send(
+                    self.interface_name,
+                    f"/group2/coffeeType",
+                    9,
+                    timestamp=current_time
+                )
+                                
+                self.device.send(
+                    self.interface_name,
+                    f"/group3/coffeeType",
+                    9,
+                    timestamp=current_time
+                )
+                
+                time.sleep(40)
+                
+                print(f"✅ Daily manual washing completed at {current_time.strftime('%H:%M:%S')}")
+                
+        except Exception as e:
+            print(f"Error during daily washing check: {e}")
+            self.washing_in_progress = False
+
+    def _manual_washing(self, current_time: datetime):
+        """
+        Daily manual washing routine called automatically at shop opening.
+        
+        This function will be called every morning at shop opening (7:00-7:30 AM) 
+        to perform the daily manual washing routine.
+        
+        Args:
+            current_time: Current datetime when washing starts
+        """
+        try:
+            # Set washing in progress to prevent brewing during washing
+            self.washing_in_progress = True
+            
+            # Call the simulator manual washing function
+            self._simulator_manual_washing(current_time)
+            
+        except Exception as e:
+            print(f"Error during daily manual washing: {e}")
+        finally:
+            # Always reset washing status
+            self.washing_in_progress = False
+
+    def _simulator_manual_washing(self, current_time: datetime):
+        """
+        Simulator function for manual washing implementation.
+        
+        This is the main function where you should implement the washing simulation logic.
+        It will be called both for daily automatic washing and manual washing operations.
+        
+        Args:
+            current_time: Current datetime when washing starts
+            
+        TODO: Implement the actual washing simulation logic here.
+        This function should:
+        1. Simulate the washing process for all groups
+        2. Send appropriate telemetry data during washing
+        3. Log the washing operation
+        4. Handle any washing-related counters or maintenance data
+        """
+        print(f"🧼 Starting manual washing simulation at {current_time.strftime('%H:%M:%S')}")
+        
+        # TODO: Add your washing simulation logic here
+        # Examples of what you might implement:
+        # - Send washing flow rates to telemetry
+        # - Update washing counters
+        # - Simulate washing duration with realistic timing
+        # - Send washing status indicators
+        # - Update maintenance data
+        
+        # Placeholder implementation - replace with your washing logic
+        print("🔄 Washing simulation placeholder - implement your washing logic here")
+        
+        # Example: You might want to simulate washing flow rates
+        # for group in self.groups:
+        #     # Simulate washing flow rate
+        #     self.device.send(
+        #         self.interface_name,
+        #         f"/{group}/flowRate",
+        #         washing_flow_rate,
+        #         timestamp=current_time
+        #     )
+        
+        print("✅ Manual washing simulation completed")
+
+    def _start_manual_washing(self, group: str):
+        """
+        Placeholder for starting manual washing on a specific group.
+        
+        This function will be called from the web interface when the manual 
+        washing button is pressed for a specific group.
+        
+        Args:
+            group: Group name (group1, group2, group3)
+        """
+        print(f"Starting manual washing for {group}")
+        # TODO: Implement manual washing logic for specific group here
+        pass
+
+    def _start_automatic_washing(self, group: str):
+        """
+        Placeholder for starting automatic washing on a specific group.
+        
+        This function will be called from the web interface when the automatic 
+        washing button is pressed for a specific group.
+        
+        Args:
+            group: Group name (group1, group2, group3)
+        """
+        print(f"Starting automatic washing for {group}")
+        # TODO: Implement automatic washing logic for specific group here
+        pass
+
+    def _start_purge(self, group: str):
+        """
+        Placeholder for starting purge operation on a specific group.
+        
+        This function will be called from the web interface when the purge 
+        button is pressed for a specific group.
+        
+        Args:
+            group: Group name (group1, group2, group3)
+        """
+        print(f"Starting purge for {group}")
+        # TODO: Implement purge logic for specific group here
+        pass
