@@ -225,6 +225,17 @@ def on_data_received_cbk(device, interface_name: str, path: str, payload):
             print(f"Successfully echoed dose message to device interface")
         except Exception as e:
             print(f"Error echoing dose message: {e}")
+    
+    # If message is from server Scheduler01 interface, handle it via the coffee machine simulator
+    elif interface_name == "it.d8pro.server.Scheduler01":
+        try:
+            # Get the global coffee machine simulator reference
+            if 'coffee_machine' in globals() and coffee_machine is not None:
+                coffee_machine.handle_scheduler_data_from_server(interface_name, path, payload)
+            else:
+                print("Coffee machine simulator not available for scheduler data handling")
+        except Exception as e:
+            print(f"Error handling scheduler data: {e}")
 
 
 def on_disconnected_cbk(_, reason: int):
@@ -487,7 +498,7 @@ def main(cb_loop: Optional[asyncio.AbstractEventLoop] = None):
         if is_device_owned_interface(interface_file):
             interfaces_to_load.append(interface_file)
         # Also load server interfaces to receive incoming messages
-        elif interface_file.name in ["it.d8pro.server.Settings03.json", "it.d8pro.server.Doses02.json"]:
+        elif interface_file.name in ["it.d8pro.server.Settings03.json", "it.d8pro.server.Doses02.json", "it.d8pro.server.Scheduler01.json"]:
             interfaces_to_load.append(interface_file)
     
     for interface_file in interfaces_to_load:
@@ -598,6 +609,19 @@ def main(cb_loop: Optional[asyncio.AbstractEventLoop] = None):
         print("No current alarms found - starting with no alarms")
     # Initialize and start the coffee machine simulator
     coffee_simulator = CoffeeMachineSimulator(device, simulator_status)
+    
+    # Load scheduler settings from cloud and send to device
+    print("Loading scheduler settings from cloud...")
+    scheduler_data = coffee_simulator.load_scheduler_settings_from_cloud()
+    
+    # Send scheduler settings to cloud via device interface
+    print("Sending scheduler settings to cloud...")
+    coffee_simulator.send_scheduler_data_to_cloud()
+    
+    # Make coffee_simulator globally accessible for scheduler message handling
+    global coffee_machine
+    coffee_machine = coffee_simulator
+    
     coffee_simulator.start_simulation()
     
     # Start web server if Flask is available

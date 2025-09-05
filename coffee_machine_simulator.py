@@ -77,6 +77,22 @@ class CoffeeMachineSimulator:
         self.last_temp_update = {}  # Track last temperature update time for each group
         self.current_temps = {}     # Track current temperatures for each group
         
+        # Initialize scheduler settings
+        self.scheduler_data = self.simulator_status.get('scheduler', {})
+        self.default_scheduler_values = {
+            "/calendarEnabled": False,
+            "/ev1Time": 0, "/ev1Data": 0,
+            "/ev2Time": 0, "/ev2Data": 0,
+            "/ev3Time": 0, "/ev3Data": 0,
+            "/ev4Time": 0, "/ev4Data": 0,
+            "/ev5Time": 0, "/ev5Data": 0,
+            "/ev6Time": 0, "/ev6Data": 0,
+            "/ev7Time": 0, "/ev7Data": 0,
+            "/ev8Time": 0, "/ev8Data": 0,
+            "/ev9Time": 0, "/ev9Data": 0,
+            "/ev10Time": 0, "/ev10Data": 0
+        }
+        
     def set_alarm(self, alarm_path: str, payload):
         """Set or unset an alarm. Handles both boolean and integer payloads."""
         # Convert payload to boolean for internal storage
@@ -1083,3 +1099,75 @@ class CoffeeMachineSimulator:
         print(f"Starting purge for {group}")
         # TODO: Implement purge logic for specific group here
         pass
+
+    def load_scheduler_settings_from_cloud(self):
+        """Load scheduler settings from cloud, using defaults if none exist."""
+        try:
+            from getCurrentScheduler import main as get_scheduler_data
+            cloud_data = get_scheduler_data()
+            
+            # Merge with defaults to ensure all fields exist
+            scheduler_data = self.default_scheduler_values.copy()
+            if cloud_data:
+                scheduler_data.update(cloud_data)
+            
+            self.scheduler_data = scheduler_data
+            
+            # Persist to simulator status
+            if self.simulator_status is not None:
+                self.simulator_status['scheduler'] = scheduler_data
+                
+            print("Scheduler settings loaded successfully")
+            return scheduler_data
+            
+        except Exception as e:
+            print(f"Error loading scheduler settings from cloud: {e}")
+            print("Using default scheduler settings")
+            self.scheduler_data = self.default_scheduler_values.copy()
+            if self.simulator_status is not None:
+                self.simulator_status['scheduler'] = self.scheduler_data
+            return self.scheduler_data
+
+    def send_scheduler_data_to_cloud(self):
+        """Send current scheduler data to cloud via device interface."""
+        try:
+            device_interface = "it.d8pro.device.Scheduler01"
+            
+            for endpoint, value in self.scheduler_data.items():
+                try:
+                    self.device.send(device_interface, endpoint, value)
+                    print(f"Sent scheduler property {endpoint}: {value}")
+                except Exception as e:
+                    print(f"Error sending scheduler property {endpoint}: {e}")
+                    
+        except Exception as e:
+            print(f"Error sending scheduler data to cloud: {e}")
+
+    def handle_scheduler_data_from_server(self, interface: str, path: str, payload):
+        """Handle scheduler data received from server and echo it back via device interface."""
+        try:
+            if interface == "it.d8pro.server.Scheduler01":
+                print(f"Received scheduler data from server: {path} = {payload}")
+                
+                # Update local scheduler data
+                if path in self.scheduler_data:
+                    self.scheduler_data[path] = payload
+                    
+                    # Persist to simulator status
+                    if self.simulator_status is not None:
+                        if 'scheduler' not in self.simulator_status:
+                            self.simulator_status['scheduler'] = {}
+                        self.simulator_status['scheduler'][path] = payload
+                    
+                    # Echo back to device interface
+                    try:
+                        device_interface = "it.d8pro.device.Scheduler01"
+                        self.device.send(device_interface, path, payload)
+                        print(f"Echoed scheduler data back to device interface: {path} = {payload}")
+                    except Exception as e:
+                        print(f"Error echoing scheduler data back: {e}")
+                else:
+                    print(f"Unknown scheduler endpoint received: {path}")
+                    
+        except Exception as e:
+            print(f"Error handling scheduler data from server: {e}")
