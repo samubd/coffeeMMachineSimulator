@@ -71,3 +71,6 @@ Before running, update `config.toml` with your Astarte instance details:
 - PAIRING_URL: Astarte pairing endpoint
 
 The simulator maintains state in `status.json` and will resume from the last known state on restart.
+
+## Additional informations
+`SECURITY_GUIDE.md` 

@@ -1533,6 +1533,7 @@ MACHINE_INTERFACE_TEMPLATE = """
                 <a href="/settings" class="nav-link">⚙️ Settings</a>
                 <a href="/machine-interface" class="nav-link">🖥️ Machine Interface</a>
                 <a href="/alarms" class="nav-link">🚨 Alarms Simulation</a>
+                <a href="/logs" class="nav-link">📋 Brewing Logs</a>
             </div>
 
             <div class="machine-container">
@@ -1806,6 +1807,7 @@ STATUS_PAGE_TEMPLATE = """
                 <a href="/settings" class="nav-link">⚙️ Settings</a>
                 <a href="/machine-interface" class="nav-link">🖥️ Machine Interface</a>
                 <a href="/alarms" class="nav-link">🚨 Alarms Simulation</a>
+                <a href="/logs" class="nav-link">📋 Brewing Logs</a>
                 <button class="refresh-btn" onclick="location.reload()">🔄 Refresh</button>
             </div>
 
@@ -1978,6 +1980,7 @@ LOGS_PAGE_TEMPLATE = """
         .coffee-type.k5 { background: #4682B4; }
         .coffee-type.k6 { background: #9932CC; }
         .coffee-type.k7 { background: #FF1493; }
+        .coffee-type.k8 { background: #221493; }
         .duration { font-family: 'Courier New', monospace; color: #495057; }
         .volume { font-family: 'Courier New', monospace; color: #495057; }
         .source { padding: 3px 8px; border-radius: 12px; font-size: 0.85em; font-weight: 600; }
