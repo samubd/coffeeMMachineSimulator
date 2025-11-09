@@ -19,10 +19,11 @@ class CoffeeMachineSimulator:
     Simulates a coffee machine with 3 groups that brew coffee at random intervals.
     """
     
-    def __init__(self, device: DeviceMqtt, simulator_status: Optional[Dict[str, Any]] = None, interface_name: str = "it.d8pro.device.TelemetryFast01"):
+    def __init__(self, device: DeviceMqtt, simulator_status: Optional[Dict[str, Any]] = None, interface_name: str = "it.d8pro.device.TelemetryFast01", save_status_callback=None):
         self.device = device
         self.interface_name = interface_name
         self.simulator_status = simulator_status or {}
+        self.save_status_callback = save_status_callback  # Callback to save simulator status
         self.groups = ["group1", "group2", "group3"]
         self.coffee_types = [1, 2, 3, 4, 5, 6, 7]  # 7 different coffee types
         self.running = False
@@ -489,7 +490,14 @@ class CoffeeMachineSimulator:
             
             # Update maintenance counters
             self._update_maintenance_counters(flow_total, current_time)
-                
+
+            # Save simulator status to file after updating counters
+            if self.save_status_callback:
+                if self.save_status_callback(self.simulator_status):
+                    print(f"✓ Simulator status saved to file after {group}/{coffee_key} update")
+                else:
+                    print(f"✗ Failed to save simulator status after {group}/{coffee_key} update")
+
         except Exception as e:
             print(f"Error updating counters: {e}")
     

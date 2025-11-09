@@ -29,7 +29,7 @@ import tomllib
 import json
 from pathlib import Path
 from threading import Thread
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Dict, Any
 from datetime import datetime, timezone
 
 from transmit_data import (
@@ -59,6 +59,7 @@ except ImportError:
 
 _INTERFACES_DIR = Path(__file__).parent.joinpath("interfaces").absolute()
 _CONFIGURATION_FILE = Path(__file__).parent.joinpath("config.toml").absolute()
+_STATUS_FILE = Path(__file__).parent.joinpath("status.json").absolute()
 
 # Global simulator status object
 simulator_status = {
@@ -174,6 +175,52 @@ simulator_status = {
     },
     "maintenance": {"data": {}}
 }
+
+
+def save_simulator_status(status: Dict[str, Any], file_path: Path = _STATUS_FILE) -> bool:
+    """
+    Save simulator status to JSON file.
+
+    Args:
+        status: Simulator status dictionary to save
+        file_path: Path to the status file (default: status.json)
+
+    Returns:
+        bool: True if successful, False otherwise
+    """
+    try:
+        with open(file_path, 'w') as f:
+            json.dump(status, f, indent=4)
+        return True
+    except Exception as e:
+        print(f"Error saving simulator status to {file_path}: {e}")
+        return False
+
+
+def load_simulator_status(file_path: Path = _STATUS_FILE) -> Optional[Dict[str, Any]]:
+    """
+    Load simulator status from JSON file.
+
+    Args:
+        file_path: Path to the status file (default: status.json)
+
+    Returns:
+        dict: Loaded status if successful, None otherwise
+    """
+    try:
+        if not file_path.exists():
+            print(f"Status file {file_path} does not exist")
+            return None
+
+        with open(file_path, 'r') as f:
+            status = json.load(f)
+
+        print(f"✓ Simulator status loaded from {file_path}")
+        return status
+
+    except Exception as e:
+        print(f"✗ Error loading simulator status from {file_path}: {e}")
+        return None
 
 
 def on_connected_cbk(_):
@@ -539,17 +586,29 @@ def main(cb_loop: Optional[asyncio.AbstractEventLoop] = None):
     _send_status_updates(device)
     _send_connectivity_status_updates(device)
     
-    # Get current counters from the API
-    print("Getting current counters...")
+    # Get current counters from the API with retry logic
+    print("\n=== Loading Counters ===")
+    print("Attempting to retrieve counters from Astarte server...")
     current_counters = getCurrentCounters()
-    #print("Current counters retrieved:", current_counters)
-    
-    # Update simulator_status with retrieved counters
+
+    # Update simulator_status with retrieved counters or fallback to local file
     if current_counters and 'data' in current_counters:
         simulator_status["counters"] = current_counters
-        print("Simulator status updated with current counters")
+        print("✓ Simulator status updated with counters from server")
+        # Save to local file as backup
+        save_simulator_status(simulator_status)
+        print("✓ Counters backup saved to status.json")
     else:
-        print("Using default counter values")
+        # Fallback to local status.json if server retrieval failed
+        print("⚠ Failed to retrieve counters from server, attempting local fallback...")
+        local_status = load_simulator_status()
+
+        if local_status and 'counters' in local_status and 'data' in local_status['counters']:
+            simulator_status["counters"] = local_status["counters"]
+            print("✓ Counters loaded from local status.json backup")
+        else:
+            print("⚠ No local backup found, using default counter values (all zeros)")
+            print("  Note: Counters will be initialized to 0")
     
     # Get current settings from the API
     print("Getting current settings...")
@@ -608,7 +667,7 @@ def main(cb_loop: Optional[asyncio.AbstractEventLoop] = None):
     else:
         print("No current alarms found - starting with no alarms")
     # Initialize and start the coffee machine simulator
-    coffee_simulator = CoffeeMachineSimulator(device, simulator_status)
+    coffee_simulator = CoffeeMachineSimulator(device, simulator_status, save_status_callback=save_simulator_status)
     
     # Load scheduler settings from cloud and send to device
     print("Loading scheduler settings from cloud...")
@@ -638,8 +697,16 @@ def main(cb_loop: Optional[asyncio.AbstractEventLoop] = None):
         while device.is_connected():
             time.sleep(1)
     except KeyboardInterrupt:
-        print("\nShutting down coffee machine simulation...")
+        print("\n=== Graceful Shutdown ===")
+        print("Shutting down coffee machine simulation...")
         coffee_simulator.stop_simulation()
+
+        # Save final state to status.json
+        print("Saving final simulator state...")
+        if save_simulator_status(simulator_status):
+            print("✓ Final simulator state saved successfully")
+        else:
+            print("✗ Failed to save final simulator state")
         
 
         
