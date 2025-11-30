@@ -310,18 +310,23 @@ def brew_coffee():
         
         # Use the coffee machine simulator's _brew_coffee method
         try:
-            coffee_simulator._brew_coffee(group, coffee_type)
-            
-            return jsonify({
-                'success': True,
-                'message': f'Coffee K{coffee_type} brewed successfully on {group}',
-                'brewing_info': {
-                    'coffee_type': coffee_type,
-                    'group': group,
-                    'note': 'Using simulator _brew_coffee method with doses'
-                }
-            })
-        
+            result = coffee_simulator._brew_coffee(group, coffee_type)
+
+            if result and result.get('success'):
+                return jsonify({
+                    'success': True,
+                    'message': f'Coffee K{coffee_type} brewed successfully on {group}',
+                    'brewing_info': {
+                        'coffee_type': coffee_type,
+                        'group': group,
+                        'duration': result.get('erog_time', 0),
+                        'flow_total': result.get('flow_total', 0)
+                    }
+                })
+            else:
+                error_msg = result.get('error', 'Unknown error') if result else 'No response from simulator'
+                return jsonify({'success': False, 'error': error_msg}), 400
+
         except Exception as brew_error:
             print(f"Error in _brew_coffee: {brew_error}")
             return jsonify({'error': f'Brewing failed: {str(brew_error)}'}), 500
@@ -1643,7 +1648,7 @@ MACHINE_INTERFACE_TEMPLATE = """
                             if (data.success) {
                                 console.log(`Coffee ${buttonId} brewed successfully on Group ${groupId}`);
                                 // Display the brewed coffee and duration
-                                if (data.brewing_info) {
+                                if (data.brewing_info && data.brewing_info.duration !== undefined) {
                                     display.textContent = `${buttonId}: ${data.brewing_info.duration}ms`;
                                 } else {
                                     display.textContent = `${buttonId}: Brewed`;

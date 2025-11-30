@@ -247,31 +247,22 @@ class AstarteAPIClient:
         return data
     def get_token_with_password_grant(self):
         """Ottiene un token JWT utilizzando il grant type 'password'."""
-        
-        # Dati di configurazione di Keycloak (come prima)
-        KEYCLOAK_URL = "https://kc-iceberg-1.kalpa.it"
-        REALM_NAME = "sanremodev"
-        CLIENT_ID = "riseberg-web"
-        USERNAME = "samuele.vecchi"  # Sostituisci con lo username dell'utente
-        PASSWORD = "12.T1rzan.21"  # Sostituisci con la password dell'utente
-        
-        # Endpoint di Keycloak per l'ottenimento del token
-        TOKEN_ENDPOINT = f"{KEYCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/token"
-        
+
+        # Use credentials from environment variables (loaded in __init__)
         headers = {
             "Content-Type": "application/x-www-form-urlencoded"
         }
         data = {
-            "grant_type": "password",
-            "client_id": CLIENT_ID,
-            "username": USERNAME,
-            "password": PASSWORD,
-            "scope": "openid profile email"  # Definisci gli scope necessari
+            "grant_type": self.auth_data.get('grant_type', 'password'),
+            "client_id": self.auth_data.get('client_id'),
+            "username": self.auth_data.get('username'),
+            "password": self.auth_data.get('password'),
+            "scope": "openid profile email"
         }
 
         try:
-            response = requests.post(TOKEN_ENDPOINT, headers=headers, data=data)
-            response.raise_for_status()  # Solleva un'eccezione per codici di stato HTTP non riusciti
+            response = requests.post(self.auth_url, headers=headers, data=data)
+            response.raise_for_status()
             token_data = response.json()
             return token_data
         except requests.exceptions.RequestException as e:

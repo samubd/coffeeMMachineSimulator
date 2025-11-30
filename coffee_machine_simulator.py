@@ -189,11 +189,15 @@ class CoffeeMachineSimulator:
             self._brew_coffee(group)
             
     def _brew_coffee(self, group: str, coffee_type: Optional[int] = None):
-        """Simulate brewing coffee on a specific group."""
+        """Simulate brewing coffee on a specific group.
+
+        Returns:
+            dict: Contains 'success' boolean and either brewing info or 'error' message
+        """
         print(f"Brew coffee from simulator")
         if not self.device.is_connected():
-            return
-            
+            return {'success': False, 'error': 'Device not connected'}
+
         # --- Alarm Checks ---
         # --- Alarm Checks ---
         # 1. Critical Alarms: Prevents all brewing
@@ -201,34 +205,36 @@ class CoffeeMachineSimulator:
             if self.active_alarms.get(alarm_path, False):
                 print(f"Cannot brew on {group}: Critical alarm '{alarm_path}' is active.")
                 self.group_status[group] = "idle"
-                return
+                return {'success': False, 'error': f"Critical alarm '{alarm_path}' is active"}
 
         # 2. Major Alarms: Affect specific groups, except for certain exceptions.
         is_blocking_major_alarm_active = False
-        
+        blocking_alarm_path = None
+
         # Check for active major alarms
         for alarm_path, is_active in self.active_alarms.items():
             if is_active and alarm_path.startswith("/major/"):
                 # Skip non-blocking major alarms
                 if alarm_path in self.non_blocking_major_alarms:
                     continue
-                
+
                 # Check if this is a blocking major alarm for the current group
                 if group in self.group_blocking_major_alarms:
                     if alarm_path in self.group_blocking_major_alarms[group]:
                         print(f"Cannot brew on {group}: Blocking major alarm '{alarm_path}' is active.")
                         is_blocking_major_alarm_active = True
+                        blocking_alarm_path = alarm_path
                         break # Found a blocking alarm for this group
-        
+
         if is_blocking_major_alarm_active:
             self.group_status[group] = "idle"
-            return
+            return {'success': False, 'error': f"Blocking major alarm '{blocking_alarm_path}' is active"}
         # --- End Alarm Checks ---
 
         # Check if the group is already brewing
         if self.group_status.get(group) == "brewing":
             print(f"Skipping brew for {group}: already brewing.")
-            return
+            return {'success': False, 'error': f'{group} is already brewing'}
             
         try:
             # Set group status to brewing
@@ -346,11 +352,20 @@ class CoffeeMachineSimulator:
 
             # Reset group status to idle after brewing is complete
             self.group_status[group] = "idle"
-            
+
+            # Return brewing info
+            return {
+                'success': True,
+                'erog_time': int(10*timer),
+                'flow_total': flow_total,
+                'coffee_type': coffee_type
+            }
+
         except Exception as e:
             print(f"Error brewing coffee on {group}: {e}")
             # Ensure status is reset even if an error occurs during brewing
             self.group_status[group] = "idle"
+            return {'success': False, 'error': str(e)}
             
     def _send_initial_flow_errors(self):
         """Send initial flow error for each group at startup."""
@@ -942,53 +957,39 @@ class CoffeeMachineSimulator:
     def _check_and_perform_daily_washing(self, current_time: datetime):
         """
         Check if daily washing needs to be performed and execute it.
-        
+        Washing happens "almost" every morning (85% probability).
+
         Args:
             current_time: Current datetime
         """
         try:
             current_date = current_time.date()
-            
+
             # Check if washing has already been performed today
-            if (self.last_washing_date is not None and 
+            if (self.last_washing_date is not None and
                 self.last_washing_date == current_date):
                 self.daily_washing_completed = True
                 return
-            
+
             # Check if it's the right time for washing (7:00-7:30 AM)
             if current_time.hour == 7 and current_time.minute <= 30:
-                print(f"🧼 Starting daily manual washing at {current_time.strftime('%H:%M:%S')}")
+                # Simulate "almost" every morning - 85% probability of washing
+                washing_probability = random.randint(1, 100)
+                if washing_probability > 85:
+                    print(f"Skipping daily washing today (probability check: {washing_probability}%)")
+                    self.last_washing_date = current_date
+                    self.daily_washing_completed = True
+                    return
+
+                print(f"Starting daily manual washing at {current_time.strftime('%H:%M:%S')}")
                 self._manual_washing(current_time)
-                
+
                 # Update washing status
                 self.last_washing_date = current_date
                 self.daily_washing_completed = True
-                
-                self.device.send(
-                    self.interface_name,
-                    f"/group1/coffeeType",
-                    9,
-                    timestamp=current_time
-                )
-                
-                self.device.send(
-                    self.interface_name,
-                    f"/group2/coffeeType",
-                    9,
-                    timestamp=current_time
-                )
-                                
-                self.device.send(
-                    self.interface_name,
-                    f"/group3/coffeeType",
-                    9,
-                    timestamp=current_time
-                )
-                
-                time.sleep(40)
-                
-                print(f"✅ Daily manual washing completed at {current_time.strftime('%H:%M:%S')}")
-                
+
+                print(f"Daily manual washing completed at {current_time.strftime('%H:%M:%S')}")
+
         except Exception as e:
             print(f"Error during daily washing check: {e}")
             self.washing_in_progress = False
@@ -1019,52 +1020,143 @@ class CoffeeMachineSimulator:
     def _simulator_manual_washing(self, current_time: datetime):
         """
         Simulator function for manual washing implementation.
-        
-        This is the main function where you should implement the washing simulation logic.
-        It will be called both for daily automatic washing and manual washing operations.
-        
+        Performs 2 washing cycles (coffeeType 9 and 10) on all groups.
+
         Args:
             current_time: Current datetime when washing starts
-            
-        TODO: Implement the actual washing simulation logic here.
-        This function should:
-        1. Simulate the washing process for all groups
-        2. Send appropriate telemetry data during washing
-        3. Log the washing operation
-        4. Handle any washing-related counters or maintenance data
         """
-        print(f"🧼 Starting manual washing simulation at {current_time.strftime('%H:%M:%S')}")
-        
-        # TODO: Add your washing simulation logic here
-        # Examples of what you might implement:
-        # - Send washing flow rates to telemetry
-        # - Update washing counters
-        # - Simulate washing duration with realistic timing
-        # - Send washing status indicators
-        # - Update maintenance data
-        
-        # Placeholder implementation - replace with your washing logic
-        print("🔄 Washing simulation placeholder - implement your washing logic here")
-        
-        # Example: You might want to simulate washing flow rates
-        # for group in self.groups:
-        #     # Simulate washing flow rate
-        #     self.device.send(
-        #         self.interface_name,
-        #         f"/{group}/flowRate",
-        #         washing_flow_rate,
-        #         timestamp=current_time
-        #     )
-        
-        print("✅ Manual washing simulation completed")
+        print(f"Starting manual washing simulation at {current_time.strftime('%H:%M:%S')}")
+
+        # Washing consists of 2 special erogations: coffeeType 9 and 10
+        washing_types = [9, 10]
+
+        for washing_type in washing_types:
+            wash_time = datetime.now(ZoneInfo("Europe/Rome"))
+            print(f"Washing cycle {washing_type} starting...")
+
+            for group in self.groups:
+                try:
+                    # Set group status to washing
+                    self.group_status[group] = "washing"
+
+                    # Send washing coffeeType
+                    self.device.send(
+                        self.interface_name,
+                        f"/{group}/coffeeType",
+                        washing_type,
+                        timestamp=wash_time
+                    )
+
+                    # Simulate washing flow (washing uses more water, ~500ml)
+                    washing_flow_total = random.randint(400, 600)  # 40-60ml
+                    washing_erog_time = random.randint(150, 250)   # 15-25 seconds
+
+                    # Send erogation time
+                    self.device.send(
+                        self.interface_name,
+                        f"/{group}/erogTime",
+                        washing_erog_time,
+                        timestamp=wash_time
+                    )
+
+                    # Send flow total
+                    self.device.send(
+                        self.interface_name,
+                        f"/{group}/flowTotal",
+                        washing_flow_total,
+                        timestamp=wash_time
+                    )
+
+                    # Update washing counters
+                    self._update_washing_counters(group, washing_type, washing_flow_total, wash_time)
+
+                    # Add log entry for washing
+                    self._add_brewing_log(group, washing_type, washing_erog_time // 10, washing_flow_total // 10, wash_time, "washing")
+
+                    print(f"  {group}: washing type {washing_type} - {washing_erog_time/10:.1f}s, {washing_flow_total/10:.1f}ml")
+
+                    # Reset group status
+                    self.group_status[group] = "idle"
+
+                except Exception as e:
+                    print(f"Error during washing on {group}: {e}")
+                    self.group_status[group] = "idle"
+
+            # Wait between washing cycles (simulate actual washing time)
+            time.sleep(20)
+
+        print(f"Manual washing simulation completed")
+
+    def _update_washing_counters(self, group: str, washing_type: int, flow_total: int, current_time: datetime):
+        """
+        Update washing counters in simulator status.
+
+        Args:
+            group: Group name (group1, group2, group3)
+            washing_type: Washing type (9 = manualWashing, 10 = automaticWashing)
+            flow_total: Flow total in tens of ml
+            current_time: Current datetime
+        """
+        try:
+            if not self.simulator_status:
+                return
+
+            counters_data = self.simulator_status.get('counters', {}).get('data', {})
+
+            # Ensure group exists
+            if group not in counters_data:
+                counters_data[group] = {}
+
+            # Map washing type to counter key
+            # coffeeType 9 = manualWashing, coffeeType 10 = automaticWashing
+            wash_key = "manualWashing" if washing_type == 9 else "automaticWashing"
+
+            # Initialize washing counter if it doesn't exist
+            if wash_key not in counters_data[group]:
+                counters_data[group][wash_key] = {
+                    'value': 0,
+                    'timestamp': current_time.isoformat(),
+                    'reception_timestamp': current_time.isoformat()
+                }
+
+            # Increment washing counter
+            counters_data[group][wash_key]['value'] += 1
+            counters_data[group][wash_key]['timestamp'] = current_time.isoformat()
+            counters_data[group][wash_key]['reception_timestamp'] = current_time.isoformat()
+
+            # Send washing counter to Astarte
+            self.device.send(
+                "it.d8pro.device.Counters02",
+                f"/{group}/{wash_key}",
+                counters_data[group][wash_key]['value'],
+                timestamp=current_time
+            )
+
+            print(f"Updated {group}/{wash_key}: {counters_data[group][wash_key]['value']}")
+
+            # Update total volume (washing also uses water)
+            if 'total' in counters_data and 'totalVolume' in counters_data['total']:
+                volume_increment = flow_total / 10
+                counters_data['total']['totalVolume']['value'] += volume_increment
+                counters_data['total']['totalVolume']['timestamp'] = current_time.isoformat()
+
+                self.device.send(
+                    "it.d8pro.device.Counters02",
+                    "/total/totalVolume",
+                    counters_data['total']['totalVolume']['value'],
+                    timestamp=current_time
+                )
+
+        except Exception as e:
+            print(f"Error updating washing counters: {e}")
 
     def _start_manual_washing(self, group: str):
         """
         Placeholder for starting manual washing on a specific group.
-        
-        This function will be called from the web interface when the manual 
+
+        This function will be called from the web interface when the manual
         washing button is pressed for a specific group.
-        
+
         Args:
             group: Group name (group1, group2, group3)
         """
