@@ -36,3 +36,6 @@ Thumbs.db
 
 # Astarte
 astarte_persistence/
+
+# Runtime state
+status.json
