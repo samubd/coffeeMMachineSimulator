@@ -59,9 +59,10 @@ except ImportError:
 
 _INTERFACES_DIR = Path(__file__).parent.joinpath("interfaces").absolute()
 _CONFIGURATION_FILE = Path(__file__).parent.joinpath("config.toml").absolute()
+_STATUS_FILE = Path(__file__).parent.joinpath("status.json").absolute()
 
-# Global simulator status object
-simulator_status = {
+# Default simulator status object (used if status.json doesn't exist)
+DEFAULT_SIMULATOR_STATUS = {
     "counters": {
         "data": {
             "group1": {
@@ -109,10 +110,10 @@ simulator_status = {
     "recipes": {
         "group1": {
             "targetTime": {
-                "1": 230,  # 23s 
-                "2": 230,  # 23s 
-                "3": 270,  # 27s 
-                "4": 300   # 30s 
+                "1": 230,  # 23s
+                "2": 230,  # 23s
+                "3": 270,  # 27s
+                "4": 300   # 30s
             },
             "dose": {
                 "1": 26,  # 26ml
@@ -123,10 +124,10 @@ simulator_status = {
         },
         "group2": {
             "targetTime": {
-                "1": 230,  # 23s 
-                "2": 230,  # 23s 
-                "3": 270,  # 27s 
-                "4": 300   # 30s 
+                "1": 230,  # 23s
+                "2": 230,  # 23s
+                "3": 270,  # 27s
+                "4": 300   # 30s
             },
             "dose": {
                 "1": 26,  # 26ml
@@ -137,10 +138,10 @@ simulator_status = {
         },
         "group3": {
             "targetTime": {
-                "1": 230,  # 23s 
-                "2": 230,  # 23s 
-                "3": 270,  # 27s 
-                "4": 300   # 30s 
+                "1": 230,  # 23s
+                "2": 230,  # 23s
+                "3": 270,  # 27s
+                "4": 300   # 30s
             },
             "dose": {
                 "1": 26,  # 26ml
@@ -174,6 +175,9 @@ simulator_status = {
     },
     "maintenance": {"data": {}}
 }
+
+# Global simulator status object - will be loaded from file
+simulator_status = None
 
 
 def on_connected_cbk(_):
@@ -312,7 +316,7 @@ def _update_machine_status_setting(path: str, payload):
 def _update_machine_status_dose(path: str, payload):
     """
     Update the machine status object with a new dose value.
-    
+
     Args:
         path: The dose path (e.g., "/group1/k1")
         payload: The new dose value
@@ -320,32 +324,96 @@ def _update_machine_status_dose(path: str, payload):
     try:
         from zoneinfo import ZoneInfo
         current_time = datetime.now(ZoneInfo("Europe/Rome"))
-        
+
         # Parse the path to extract group and dose name
         # Path format: /group/dose (e.g., /group1/k1, /tea/t1)
         path_parts = path.strip('/').split('/')
-        
+
         if len(path_parts) >= 2:
             group = path_parts[0]
             dose_name = path_parts[1]
-            
+
             # Initialize doses data structure if it doesn't exist
             if 'data' not in simulator_status['doses']:
                 simulator_status['doses']['data'] = {}
-            
+
             if group not in simulator_status['doses']['data']:
                 simulator_status['doses']['data'][group] = {}
-            
+
             # Update the dose value
             simulator_status['doses']['data'][group][dose_name] = payload
-            
+
             print(f"Updated machine dose: {group}/{dose_name} = {payload}")
-            
+
         else:
             print(f"Invalid dose path format: {path}")
-            
+
     except Exception as e:
         print(f"Error updating machine status dose: {e}")
+
+
+def load_simulator_status():
+    """
+    Load simulator status from status.json file.
+    Returns loaded status or DEFAULT_SIMULATOR_STATUS if file doesn't exist.
+    """
+    import copy
+
+    if _STATUS_FILE.exists():
+        try:
+            print(f"Loading simulator status from {_STATUS_FILE}...")
+            with open(_STATUS_FILE, 'r') as f:
+                loaded_status = json.load(f)
+                print(f"Simulator status loaded successfully from {_STATUS_FILE}")
+
+                # Verify that essential keys exist in loaded status
+                if 'counters' in loaded_status:
+                    # Print current counter values for verification
+                    if 'data' in loaded_status['counters'] and 'total' in loaded_status['counters']['data']:
+                        total_coffee = loaded_status['counters']['data']['total'].get('totalCoffee', {}).get('value', 0)
+                        print(f"Loaded total coffee counter: {total_coffee}")
+
+                return loaded_status
+        except json.JSONDecodeError as e:
+            print(f"Error decoding JSON from {_STATUS_FILE}: {e}")
+            print("Starting with default status.")
+            return copy.deepcopy(DEFAULT_SIMULATOR_STATUS)
+        except Exception as e:
+            print(f"Error loading simulator status from {_STATUS_FILE}: {e}")
+            print("Starting with default status.")
+            return copy.deepcopy(DEFAULT_SIMULATOR_STATUS)
+    else:
+        print(f"{_STATUS_FILE} not found. Starting with default status.")
+        return copy.deepcopy(DEFAULT_SIMULATOR_STATUS)
+
+
+def save_simulator_status():
+    """
+    Save current simulator_status to status.json file.
+    """
+    try:
+        print(f"Saving simulator status to {_STATUS_FILE}...")
+        with open(_STATUS_FILE, 'w') as f:
+            json.dump(simulator_status, f, indent=4)
+        print(f"Simulator status saved successfully to {_STATUS_FILE}")
+    except Exception as e:
+        print(f"Error saving simulator status to {_STATUS_FILE}: {e}")
+
+
+def periodic_status_save(interval_seconds=60):
+    """
+    Periodically save simulator status to file.
+    Runs in a separate thread.
+
+    Args:
+        interval_seconds: How often to save the status (default: 60 seconds)
+    """
+    while True:
+        time.sleep(interval_seconds)
+        try:
+            save_simulator_status()
+        except Exception as e:
+            print(f"Error in periodic status save: {e}")
 
 
 def _send_status_updates(device: DeviceMqtt):
@@ -458,6 +526,13 @@ def _send_connectivity_status_updates(device: DeviceMqtt):
         print(f"Error sending status updates: {e}")
 
 def main(cb_loop: Optional[asyncio.AbstractEventLoop] = None):
+    global simulator_status
+
+    # Load simulator status from file FIRST before doing anything else
+    print("=" * 60)
+    print("LOADING SIMULATOR STATUS FROM FILE")
+    print("=" * 60)
+    simulator_status = load_simulator_status()
 
     with open(_CONFIGURATION_FILE, "rb") as config_fp:
         config = tomllib.load(config_fp)
@@ -527,8 +602,11 @@ def main(cb_loop: Optional[asyncio.AbstractEventLoop] = None):
         elapsed_time = time.time() - start_time
         if elapsed_time > connection_timeout:
             print(f"Connection timeout after {connection_timeout} seconds")
+            # Save status before exiting
+            print("Saving simulator state before exit...")
+            save_simulator_status()
             return
-            
+
         print("connecting")
         time.sleep(1)
 
@@ -539,17 +617,27 @@ def main(cb_loop: Optional[asyncio.AbstractEventLoop] = None):
     _send_status_updates(device)
     _send_connectivity_status_updates(device)
     
-    # Get current counters from the API
-    print("Getting current counters...")
-    current_counters = getCurrentCounters()
-    #print("Current counters retrieved:", current_counters)
-    
-    # Update simulator_status with retrieved counters
-    if current_counters and 'data' in current_counters:
-        simulator_status["counters"] = current_counters
-        print("Simulator status updated with current counters")
-    else:
-        print("Using default counter values")
+    # Get current counters from the API (optional - only to sync with cloud if needed)
+    print("Getting current counters from cloud API...")
+    try:
+        current_counters = getCurrentCounters()
+        #print("Current counters retrieved:", current_counters)
+
+        # Update simulator_status with retrieved counters ONLY if cloud has data
+        # This allows cloud to override local state if needed, but local state persists if cloud is unavailable
+        if current_counters and 'data' in current_counters:
+            # Only update if cloud counters are more recent or local counters are empty
+            if ('counters' not in simulator_status or
+                not simulator_status['counters'].get('data') or
+                simulator_status['counters']['data']['total'].get('totalCoffee', {}).get('value', 0) == 0):
+                simulator_status["counters"] = current_counters
+                print("Simulator status updated with cloud counters (local was empty or zero)")
+            else:
+                print("Keeping local counter values (cloud sync skipped)")
+        else:
+            print("Cloud counters not available - using local counter values")
+    except Exception as e:
+        print(f"Error fetching cloud counters: {e} - using local counter values")
     
     # Get current settings from the API
     print("Getting current settings...")
@@ -623,7 +711,12 @@ def main(cb_loop: Optional[asyncio.AbstractEventLoop] = None):
     coffee_machine = coffee_simulator
     
     coffee_simulator.start_simulation()
-    
+
+    # Start periodic status save thread
+    print("Starting periodic status save thread (saves every 60 seconds)...")
+    save_thread = Thread(target=periodic_status_save, args=(60,), daemon=True)
+    save_thread.start()
+
     # Start web server if Flask is available
     if WEB_SERVER_AVAILABLE:
         set_coffee_references(device, coffee_simulator, simulator_status)
@@ -631,7 +724,7 @@ def main(cb_loop: Optional[asyncio.AbstractEventLoop] = None):
         print("Web interface available at: http://localhost:5000")
     else:
         print("Web interface not available (Flask not installed)")
-    
+
     # Keep the simulation running
     print("Coffee machine simulation is running. Press Ctrl+C to stop.")
     try:
@@ -640,6 +733,11 @@ def main(cb_loop: Optional[asyncio.AbstractEventLoop] = None):
     except KeyboardInterrupt:
         print("\nShutting down coffee machine simulation...")
         coffee_simulator.stop_simulation()
+
+        # Save final state before exiting
+        print("Saving final simulator state...")
+        save_simulator_status()
+        print("Final state saved. Shutdown complete.")
         
 
         
